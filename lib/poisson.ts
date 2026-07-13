@@ -54,7 +54,8 @@ const MAX_ADJUSTMENT_FACTOR = 1.55
 // FUNCIONES AUXILIARES
 // ================================================================
 
-function clamp(value: number, min: number, max: number): number {
+// 🔥 Exportamos clamp para que pueda ser usado en mlb-api.ts
+export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
@@ -114,25 +115,27 @@ export function windFactor(
 }
 
 // ================================================================
-// FACTOR DE PLATOON (mano a mano)
+// FACTOR DE PLATOON (mano a mano) – CORREGIDO para aceptar 'S'
 // ================================================================
 
 /**
  * Calcula un factor multiplicativo basado en la combinación de manos
  * del pitcher y del bateador.
  * 
- * @param pitcherHand 'L' | 'R' | null
+ * @param pitcherHand 'L' | 'R' | 'S' | null  (ahora acepta 'S')
  * @param batterHand  'L' | 'R' | 'S' | null
  * @returns factor entre 0.85 y 1.15
  */
 export function platoonFactor(
-  pitcherHand: 'L' | 'R' | null,
+  pitcherHand: 'L' | 'R' | 'S' | null,
   batterHand: 'L' | 'R' | 'S' | null
 ): number {
-  if (!pitcherHand || !batterHand || batterHand === 'S') {
+  // Si falta alguna mano, o alguno es ambidiestro, no hay ventaja
+  if (!pitcherHand || !batterHand || pitcherHand === 'S' || batterHand === 'S') {
     return 1.0
   }
 
+  // Ventaja para el bateador cuando la mano es opuesta (L vs R o R vs L)
   const isOpposite = (pitcherHand === 'L' && batterHand === 'R') ||
                      (pitcherHand === 'R' && batterHand === 'L')
 

@@ -11,6 +11,7 @@ import {
   PITCHER_K_STABILIZATION_BF,
   TEAM_OBP_STABILIZATION_PA,
   shrinkTowardAverage,
+  clamp, // <-- 🔥 AÑADIDO
 } from './poisson'
 import type {
   BatterRow,
