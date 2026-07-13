@@ -1,0 +1,75 @@
+@import "katex/dist/katex.min.css";
+@import "tailwindcss";
+
+html {
+  overflow-y: scroll;
+}
+
+@layer base {
+  body {
+    background-color: white;
+    color: var(--color-slate-900);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .methodology-formula .katex-display {
+    margin: 0;
+  }
+
+  .methodology-formula--left .katex-display {
+    text-align: left;
+  }
+
+  .methodology-formula .katex {
+    font-size: 1.08rem;
+    line-height: 1.35;
+  }
+
+  .methodology-formula--odds .katex {
+    font-size: 0.98rem;
+  }
+
+  .methodology-inline-formula .katex {
+    font-size: 0.94rem;
+    white-space: normal;
+  }
+
+  .methodology-card-formula .katex-display {
+    margin: 0;
+    text-align: center;
+  }
+
+  .methodology-card-formula .katex {
+    font-size: 0.76rem;
+    line-height: 1.15;
+  }
+
+  @media (max-width: 640px) {
+    .methodology-formula {
+      padding-inline: 0.9rem;
+    }
+
+    .methodology-formula .katex {
+      font-size: 0.6rem;
+      line-height: 1.15;
+    }
+
+    .methodology-formula--odds .katex {
+      font-size: 0.54rem;
+      line-height: 1.05;
+    }
+
+    .methodology-inline-formula .katex {
+      font-size: 0.62rem;
+      line-height: 1.1;
+    }
+
+    .methodology-card-formula .katex {
+      font-size: 0.54rem;
+      line-height: 1.05;
+    }
+  }
+}

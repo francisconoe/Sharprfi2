@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.next/
+coverage/
+.git/
+*.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.zip
+graphify-out/
+
+francisco/
+graphify-out/converted/

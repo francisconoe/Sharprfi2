@@ -1,0 +1,36 @@
+const TEAM_NICKNAMES: Record<string, string> = {
+  'Arizona Diamondbacks': 'Diamondbacks',
+  'Atlanta Braves': 'Braves',
+  'Athletics': 'Athletics',
+  'Baltimore Orioles': 'Orioles',
+  'Boston Red Sox': 'Red Sox',
+  'Chicago Cubs': 'Cubs',
+  'Chicago White Sox': 'White Sox',
+  'Cincinnati Reds': 'Reds',
+  'Cleveland Guardians': 'Guardians',
+  'Colorado Rockies': 'Rockies',
+  'Detroit Tigers': 'Tigers',
+  'Houston Astros': 'Astros',
+  'Kansas City Royals': 'Royals',
+  'Los Angeles Angels': 'Angels',
+  'Los Angeles Dodgers': 'Dodgers',
+  'Miami Marlins': 'Marlins',
+  'Milwaukee Brewers': 'Brewers',
+  'Minnesota Twins': 'Twins',
+  'New York Mets': 'Mets',
+  'New York Yankees': 'Yankees',
+  'Philadelphia Phillies': 'Phillies',
+  'Pittsburgh Pirates': 'Pirates',
+  'San Diego Padres': 'Padres',
+  'San Francisco Giants': 'Giants',
+  'Seattle Mariners': 'Mariners',
+  'St. Louis Cardinals': 'Cardinals',
+  'Tampa Bay Rays': 'Rays',
+  'Texas Rangers': 'Rangers',
+  'Toronto Blue Jays': 'Blue Jays',
+  'Washington Nationals': 'Nationals',
+}
+
+export function getTeamDisplayName(teamName: string): string {
+  return TEAM_NICKNAMES[teamName] ?? teamName
+}
