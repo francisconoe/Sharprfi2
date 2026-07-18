@@ -25,6 +25,8 @@ import {
   LEAGUE_AVG_BARREL_PCT,
   LEAGUE_AVG_OBP,
   LEAGUE_AVG_HARD_HIT_PCT,
+  LEAGUE_AVG_ERA,        // 🔥 NUEVO
+  LEAGUE_AVG_BB9,        // 🔥 NUEVO
   getPitcherStatsWithFallback,
   platoonFactor,
 } from '@/lib/poisson'
@@ -123,6 +125,7 @@ export async function GET(req: NextRequest) {
           tempF: 72,
           windSpeedMph: 0,
           windFromDegrees: 0,
+          humidity: 50, // 🔥 NUEVO: valor por defecto
           failure: false,
           controlled: false,
         }
@@ -142,6 +145,8 @@ export async function GET(req: NextRequest) {
               nrfiFactor: 1.0,
               bbFactor: 1.0,
               recentFactor: 1.0,
+              fie: LEAGUE_AVG_ERA,   // 🔥 NUEVO
+              bb9: LEAGUE_AVG_BB9,   // 🔥 NUEVO
             }
 
         const awayPitcherFirstInning = game.teams.away.probablePitcher
@@ -154,6 +159,8 @@ export async function GET(req: NextRequest) {
               nrfiFactor: 1.0,
               bbFactor: 1.0,
               recentFactor: 1.0,
+              fie: LEAGUE_AVG_ERA,   // 🔥 NUEVO
+              bb9: LEAGUE_AVG_BB9,   // 🔥 NUEVO
             }
 
         // ================================================================
@@ -304,6 +311,11 @@ export async function GET(req: NextRequest) {
           pitcherBarrelRate: awayPitcher.barrelRate,
           teamOBP: homeOBP,
           topOfOrderOBP: homeTopOfOrderOBP ?? undefined,
+          // 🔥 NUEVOS PARÁMETROS
+          humidity: weather.humidity,
+          pitcherFIE: awayPitcherFirstInning.fie,
+          pitcherBB9: awayPitcherFirstInning.bb9,
+          fttoFactor: 1.0, // placeholder
           platoonFactor: homePlatoonFactor,
           nrfiFactor: awayPitcherFirstInning.nrfiFactor,
           bbFactor: awayPitcherFirstInning.bbFactor,
@@ -318,6 +330,11 @@ export async function GET(req: NextRequest) {
           pitcherBarrelRate: homePitcher.barrelRate,
           teamOBP: awayOBP,
           topOfOrderOBP: awayTopOfOrderOBP ?? undefined,
+          // 🔥 NUEVOS PARÁMETROS
+          humidity: weather.humidity,
+          pitcherFIE: homePitcherFirstInning.fie,
+          pitcherBB9: homePitcherFirstInning.bb9,
+          fttoFactor: 1.0, // placeholder
           platoonFactor: awayPlatoonFactor,
           nrfiFactor: homePitcherFirstInning.nrfiFactor,
           bbFactor: homePitcherFirstInning.bbFactor,

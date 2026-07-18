@@ -55,11 +55,11 @@ export async function fetchWeather(
 ): Promise<WeatherData> {
   const stadium = getStadiumConstants(venueId)
   if (!stadium) {
-    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, failure: false, controlled: false }
+    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, humidity: 50, failure: false, controlled: false }
   }
 
   if (stadium.weatherControlled) {
-    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, failure: false, controlled: true }
+    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, humidity: 50, failure: false, controlled: true }
   }
 
   try {
@@ -73,7 +73,8 @@ export async function fetchWeather(
     )
     url.searchParams.set('latitude', String(stadium.lat))
     url.searchParams.set('longitude', String(stadium.lon))
-    url.searchParams.set('hourly', 'temperature_2m,wind_speed_10m,wind_direction_10m')
+    // 🔥 Añadimos relative_humidity_2m a los parámetros
+    url.searchParams.set('hourly', 'temperature_2m,wind_speed_10m,wind_direction_10m,relative_humidity_2m')
     url.searchParams.set('temperature_unit', 'fahrenheit')
     url.searchParams.set('wind_speed_unit', 'mph')
     url.searchParams.set('timezone', 'auto')
@@ -92,6 +93,7 @@ export async function fetchWeather(
     const temps: number[] = data.hourly.temperature_2m
     const speeds: number[] = data.hourly.wind_speed_10m
     const directions: number[] = data.hourly.wind_direction_10m
+    const humidities: number[] = data.hourly.relative_humidity_2m // 🔥 Nueva variable
 
     const gameMs = new Date(gameTimeIso).getTime()
     let closestIdx = 0
@@ -105,11 +107,12 @@ export async function fetchWeather(
       tempF: Math.round(temps[closestIdx]),
       windSpeedMph: Math.round(speeds[closestIdx]),
       windFromDegrees: Math.round(directions[closestIdx]),
+      humidity: humidities[closestIdx] ?? 50, // 🔥 humedad en %
       failure: false,
       controlled: false,
     }
   } catch {
-    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, failure: true, controlled: false }
+    return { tempF: 72, windSpeedMph: 0, windFromDegrees: 0, humidity: 50, failure: true, controlled: false }
   }
 }
 

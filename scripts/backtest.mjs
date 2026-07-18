@@ -48,7 +48,7 @@ const PARK_FACTORS = {
 const STADIUMS = {
   1: { lat: 33.8003, lon: -117.8827, outfieldFacingDegrees: 280 },
   2: { lat: 39.2838, lon: -76.6218, outfieldFacingDegrees: 335 },
-  3: { lat: 42.3467, lon: -71.0972, outfieldFacingDegrees: 95 },
+  3: { lat: 41.3467, lon: -71.0972, outfieldFacingDegrees: 95 },
   4: { lat: 41.83, lon: -87.6341, outfieldFacingDegrees: 5 },
   5: { lat: 41.4962, lon: -81.6852, outfieldFacingDegrees: 5 },
   7: { lat: 39.0517, lon: -94.4803, outfieldFacingDegrees: 330 },
@@ -1152,10 +1152,16 @@ async function run() {
   console.log(`Brier score:           ${brierScore.toFixed(4)}`)
   console.log('')
 
-  const bins = Array.from({ length: 5 }, (_, index) => ({
-    min: index * 0.1 + 0.3,
-    max: index === 4 ? 1.01 : index * 0.1 + 0.4,
-  }))
+  // 🔥 BINS MEJORADOS: más finos para diagnosticar extremos
+  const bins = [
+    { min: 0.0, max: 0.30, label: '< 30%' },
+    { min: 0.30, max: 0.40, label: '30-40%' },
+    { min: 0.40, max: 0.50, label: '40-50%' },
+    { min: 0.50, max: 0.60, label: '50-60%' },
+    { min: 0.60, max: 0.70, label: '60-70%' },
+    { min: 0.70, max: 0.80, label: '70-80%' },
+    { min: 0.80, max: 1.01, label: '≥ 80%' },
+  ]
 
   console.log('Calibration bins:')
   for (const bin of bins) {
@@ -1163,7 +1169,7 @@ async function run() {
     if (rows.length === 0) continue
     const predicted = rows.reduce((sum, row) => sum + row.prediction, 0) / rows.length
     const actual = rows.reduce((sum, row) => sum + row.actual, 0) / rows.length
-    console.log(`  ${formatPct(bin.min)}-${formatPct(bin.max)}: n=${rows.length}, pred=${formatPct(predicted)}, actual=${formatPct(actual)}`)
+    console.log(`  ${bin.label.padEnd(8)}: n=${rows.length}, pred=${formatPct(predicted)}, actual=${formatPct(actual)}`)
   }
 
   if (compareMode && legacyPredictions.length > 0) {
@@ -1222,7 +1228,7 @@ async function run() {
       if (rows.length === 0) continue
       const predicted = rows.reduce((sum, row) => sum + row.prediction, 0) / rows.length
       const actual = rows.reduce((sum, row) => sum + row.actual, 0) / rows.length
-      console.log(`  ${formatPct(bin.min)}-${formatPct(bin.max)}: n=${rows.length}, pred=${formatPct(predicted)}, actual=${formatPct(actual)}`)
+      console.log(`  ${bin.label.padEnd(8)}: n=${rows.length}, pred=${formatPct(predicted)}, actual=${formatPct(actual)}`)
     }
   }
 

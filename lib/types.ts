@@ -20,6 +20,7 @@ export interface WeatherData {
   tempF: number
   windSpeedMph: number
   windFromDegrees: number  // direction wind is coming FROM (Open-Meteo convention)
+  humidity: number         // 🔥 nueva: humedad relativa en porcentaje (0-100)
   failure: boolean         // true if fetch failed; model factors default to 1.0
   controlled: boolean      // true for roofed/retractable parks where weather is neutralized
 }
