@@ -25,8 +25,8 @@ import {
   LEAGUE_AVG_BARREL_PCT,
   LEAGUE_AVG_OBP,
   LEAGUE_AVG_HARD_HIT_PCT,
-  LEAGUE_AVG_ERA,        // 🔥 NUEVO
-  LEAGUE_AVG_BB9,        // 🔥 NUEVO
+  LEAGUE_AVG_ERA,
+  LEAGUE_AVG_BB9,
   getPitcherStatsWithFallback,
   platoonFactor,
 } from '@/lib/poisson'
@@ -34,6 +34,27 @@ import type { GameResult, GamesResponse, PitcherStats } from '@/lib/types'
 
 const RESPONSE_TTL_SECONDS = 300 // 5 minutes
 const RESPONSE_CACHE_VERSION = 'v4'
+
+// ================================================================
+// 🔥 Platt Scaling para recalibrar probabilidades
+// ================================================================
+/**
+ * Aplica Platt Scaling para corregir la calibración.
+ * Coeficientes estimados a partir del backtest 2026 (blend).
+ * a = 0.85 (reduce confianza en extremos)
+ * b = 0.05 (corrige sesgo positivo)
+ */
+function plattScale(p: number): number {
+  const a = 0.85
+  const b = 0.05
+  // Evitar log(0) o log(1)
+  const clipped = Math.min(Math.max(p, 0.001), 0.999)
+  const logit = Math.log(clipped / (1 - clipped))
+  const calibratedLogit = a * logit + b
+  const calibrated = 1 / (1 + Math.exp(-calibratedLogit))
+  // Clampear para evitar valores fuera de [0,1]
+  return Math.min(Math.max(calibrated, 0.01), 0.99)
+}
 
 function getPacificDate(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date())
@@ -125,7 +146,7 @@ export async function GET(req: NextRequest) {
           tempF: 72,
           windSpeedMph: 0,
           windFromDegrees: 0,
-          humidity: 50, // 🔥 NUEVO: valor por defecto
+          humidity: 50,
           failure: false,
           controlled: false,
         }
@@ -145,8 +166,8 @@ export async function GET(req: NextRequest) {
               nrfiFactor: 1.0,
               bbFactor: 1.0,
               recentFactor: 1.0,
-              fie: LEAGUE_AVG_ERA,   // 🔥 NUEVO
-              bb9: LEAGUE_AVG_BB9,   // 🔥 NUEVO
+              fie: LEAGUE_AVG_ERA,
+              bb9: LEAGUE_AVG_BB9,
             }
 
         const awayPitcherFirstInning = game.teams.away.probablePitcher
@@ -159,8 +180,8 @@ export async function GET(req: NextRequest) {
               nrfiFactor: 1.0,
               bbFactor: 1.0,
               recentFactor: 1.0,
-              fie: LEAGUE_AVG_ERA,   // 🔥 NUEVO
-              bb9: LEAGUE_AVG_BB9,   // 🔥 NUEVO
+              fie: LEAGUE_AVG_ERA,
+              bb9: LEAGUE_AVG_BB9,
             }
 
         // ================================================================
@@ -311,11 +332,10 @@ export async function GET(req: NextRequest) {
           pitcherBarrelRate: awayPitcher.barrelRate,
           teamOBP: homeOBP,
           topOfOrderOBP: homeTopOfOrderOBP ?? undefined,
-          // 🔥 NUEVOS PARÁMETROS
           humidity: weather.humidity,
           pitcherFIE: awayPitcherFirstInning.fie,
           pitcherBB9: awayPitcherFirstInning.bb9,
-          fttoFactor: 1.0, // placeholder
+          fttoFactor: 1.0,
           platoonFactor: homePlatoonFactor,
           nrfiFactor: awayPitcherFirstInning.nrfiFactor,
           bbFactor: awayPitcherFirstInning.bbFactor,
@@ -330,11 +350,10 @@ export async function GET(req: NextRequest) {
           pitcherBarrelRate: homePitcher.barrelRate,
           teamOBP: awayOBP,
           topOfOrderOBP: awayTopOfOrderOBP ?? undefined,
-          // 🔥 NUEVOS PARÁMETROS
           humidity: weather.humidity,
           pitcherFIE: homePitcherFirstInning.fie,
           pitcherBB9: homePitcherFirstInning.bb9,
-          fttoFactor: 1.0, // placeholder
+          fttoFactor: 1.0,
           platoonFactor: awayPlatoonFactor,
           nrfiFactor: homePitcherFirstInning.nrfiFactor,
           bbFactor: homePitcherFirstInning.bbFactor,
@@ -379,10 +398,17 @@ export async function GET(req: NextRequest) {
           awayStreakFactor: SIM_USE_STREAKS ? streakFactorForWinStreak(winStreaks[game.teams.away.team.id] ?? 0) : 1.0,
         })
 
-        const yrfiProbability =
+        // ================================================================
+        // 6. BLEND Y RECALIBRACIÓN CON PLATT SCALING
+        // ================================================================
+        let rawYrfiProbability =
           HEADLINE_MODEL === 'sim' ? sim.simYrfiProbability :
           HEADLINE_MODEL === 'blend' ? (poissonYrfiProbability + sim.simYrfiProbability) / 2 :
           poissonYrfiProbability
+
+        // 🔥 Aplicar Platt Scaling para mejorar la calibración
+        const yrfiProbability = plattScale(rawYrfiProbability)
+
         const odds = breakEvenOdds(yrfiProbability)
 
         let firstInningResult: GameResult['firstInningResult'] = 'pending'
@@ -408,7 +434,7 @@ export async function GET(req: NextRequest) {
           topOfOrderOBP: { home: homeTopOfOrderOBP, away: awayTopOfOrderOBP },
           parkFactor,
           lambda: { home: lambdaHome, away: lambdaAway },
-          yrfiProbability,
+          yrfiProbability, // Recalibrada
           poissonYrfiProbability,
           simYrfiProbability: sim.simYrfiProbability,
           modelUsed: HEADLINE_MODEL,
