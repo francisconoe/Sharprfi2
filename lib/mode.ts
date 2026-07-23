@@ -28,27 +28,35 @@ export function sortForMode(games: GameResult[], mode: ViewMode): GameResult[] {
   return [...games].sort((a, b) => viewProbability(b, mode) - viewProbability(a, mode))
 }
 
-// Brand accent per mode: YRFI keeps its green identity, NRFI its red.
-// Literal class strings so Tailwind's compiler picks them up.
-export const MODE_ACCENT: Record<ViewMode, {
-  solid: string
-  solidHover: string
-  ring: string
-  link: string
-  brandText: string
-}> = {
+// Brand accent per mode: YRFI (green), NRFI (red) — colores vibrantes y mejor contraste.
+export const MODE_ACCENT: Record<
+  ViewMode,
+  {
+    solid: string
+    solidHover: string
+    ring: string
+    link: string
+    brandText: string
+  }
+> = {
   yrfi: {
-    solid: 'bg-green-600 text-white',
-    solidHover: 'bg-green-600 text-white hover:bg-green-700',
-    ring: 'focus:ring-green-500',
-    link: 'text-green-700 underline decoration-green-200 underline-offset-2 transition-colors hover:text-green-800',
-    brandText: 'text-green-600',
+    // 🔥 Verde vibrante con gradiente y sombra
+    solid:
+      'bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold shadow-lg shadow-emerald-500/30',
+    solidHover:
+      'bg-gradient-to-r from-emerald-600 to-green-600 text-white font-bold shadow-xl shadow-emerald-500/40 hover:scale-[1.02] transition-transform',
+    ring: 'focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-900',
+    link: 'text-emerald-400 font-semibold underline decoration-emerald-400/30 underline-offset-2 transition-all hover:text-emerald-300 hover:decoration-emerald-300',
+    brandText: 'text-emerald-400 font-bold drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]',
   },
   nrfi: {
-    solid: 'bg-red-600 text-white',
-    solidHover: 'bg-red-600 text-white hover:bg-red-700',
-    ring: 'focus:ring-red-500',
-    link: 'text-red-700 underline decoration-red-200 underline-offset-2 transition-colors hover:text-red-800',
-    brandText: 'text-red-600',
+    // 🔥 Rojo vibrante con gradiente y sombra
+    solid:
+      'bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold shadow-lg shadow-rose-500/30',
+    solidHover:
+      'bg-gradient-to-r from-rose-700 to-red-700 text-white font-bold shadow-xl shadow-rose-500/40 hover:scale-[1.02] transition-transform',
+    ring: 'focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 focus:ring-offset-slate-900',
+    link: 'text-rose-400 font-semibold underline decoration-rose-400/30 underline-offset-2 transition-all hover:text-rose-300 hover:decoration-rose-300',
+    brandText: 'text-rose-400 font-bold drop-shadow-[0_0_8px_rgba(244,63,94,0.3)]',
   },
 }
