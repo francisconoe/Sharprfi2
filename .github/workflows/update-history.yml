@@ -1,0 +1,49 @@
+name: Actualizar Historial Diario
+
+on:
+  schedule:
+    # Ejecutar todos los días a las 23:30 UTC (5:30 PM CDMX)
+    - cron: '30 23 * * *'
+  workflow_dispatch: # Permite ejecutar manualmente
+
+jobs:
+  update-history:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar backtest desde inicio de temporada hasta ayer
+        run: |
+          YESTERDAY=$(date -d "yesterday" '+%Y-%m-%d')
+          npm run backtest -- 2026-03-26 $YESTERDAY --compare-sim
+
+      - name: Generar historial
+        run: npm run generate-history
+
+      - name: Verificar cambios en history.json
+        id: check
+        run: |
+          if git diff --exit-code public/history.json; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Subir cambios a GitHub
+        if: steps.check.outputs.changes == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add public/history.json
+          git commit -m "chore: actualizar historial automático [skip ci]"
+          git push
