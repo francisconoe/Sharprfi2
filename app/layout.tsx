@@ -4,20 +4,32 @@ import './globals.css'
 import { SITE_NAME, getSiteUrl } from '@/lib/site'
 
 const geist = Geist({ subsets: ['latin'] })
+
 const metadataTitle = SITE_NAME
-const metadataDescription = 'One model, both sides of the first inning. Find the minimum odds you need to bet NRFI or YRFI with a statistical edge. Updated daily.'
+const metadataDescription =
+  'Predictions for MLB first inning (NRFI/YRFI) with advanced stats, Monte Carlo simulation, and machine learning calibration. Get the edge on your bets.'
 const ogImageUrl = `${getSiteUrl()}/sharprfi-opengraph.png`
 
 export const metadata: Metadata = {
-  applicationName: 'sharprfi',
+  applicationName: 'RenteriaFirstInning',
   title: {
     absolute: metadataTitle,
+    template: `%s | ${metadataTitle}`,
   },
   description: metadataDescription,
+  keywords: [
+    'MLB predictions',
+    'NRFI',
+    'YRFI',
+    'first inning',
+    'baseball betting',
+    'statistical model',
+    'Renteria',
+  ],
+  authors: [{ name: 'Francisco Renteria' }],
+  creator: 'Francisco Renteria',
   icons: {
-    icon: [
-      { url: '/sharprfi-ballmark.svg', type: 'image/svg+xml' },
-    ],
+    icon: [{ url: '/sharprfi-ballmark.svg', type: 'image/svg+xml' }],
     shortcut: '/sharprfi-ballmark.svg',
     apple: '/sharprfi-ballmark.svg',
   },
@@ -30,7 +42,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: ogImageUrl,
-        alt: 'SHARPRFI open graph image',
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - MLB First-Inning Predictor`,
       },
     ],
   },
@@ -40,12 +54,20 @@ export const metadata: Metadata = {
     description: metadataDescription,
     images: [ogImageUrl],
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={geist.className}>
+      <body className={`${geist.className} min-h-screen bg-background text-foreground`}>
         {children}
       </body>
     </html>

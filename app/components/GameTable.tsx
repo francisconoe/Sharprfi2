@@ -28,9 +28,8 @@ function formatOddsDisplay(
 }
 
 function MobileResultBadge({ game, mode }: { game: GameResult; mode: ViewMode }) {
-  // A run scored is a YRFI win / NRFI loss, and vice versa.
-  const winBadge = 'rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700'
-  const lossBadge = 'rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600'
+  const winBadge = 'rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-300 border border-emerald-500/30'
+  const lossBadge = 'rounded-full bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-300 border border-rose-500/30'
   if (game.firstInningResult === 'run') {
     return <span className={mode === 'yrfi' ? winBadge : lossBadge}>RUN</span>
   }
@@ -38,9 +37,9 @@ function MobileResultBadge({ game, mode }: { game: GameResult; mode: ViewMode })
     return <span className={mode === 'yrfi' ? lossBadge : winBadge}>NO RUN</span>
   }
   if (game.gameStatus === 'inProgress') {
-    return <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-700">IP</span>
+    return <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">IP</span>
   }
-  return <span className="text-slate-300 text-sm">—</span>
+  return <span className="text-slate-500 text-sm">—</span>
 }
 
 function PitcherRow({
@@ -51,9 +50,9 @@ function PitcherRow({
   pitcher: GameResult['homePitcher']
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
-      <span className="shrink-0 text-slate-400">{label}</span>
-      <span className="min-w-0 text-right font-medium text-slate-700">
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-800/50 px-3 py-2 border border-slate-700/50">
+      <span className="shrink-0 text-slate-400 text-xs font-medium uppercase tracking-wider">{label}</span>
+      <span className="min-w-0 text-right font-medium text-slate-200">
         <span className="block w-full truncate">{pitcher.name}</span>
       </span>
     </div>
@@ -89,32 +88,32 @@ function MobileCard({ game }: { game: GameResult }) {
 
   return (
     <article
-      className="rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/50 cursor-pointer select-none transition-transform duration-75 active:scale-[0.98]"
+      className="rounded-2xl border border-slate-700/50 bg-slate-800/40 backdrop-blur-sm shadow-xl cursor-pointer select-none transition-all duration-200 active:scale-[0.98] hover:border-slate-500/50"
       onClick={() => setExpanded(e => !e)}
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Matchup</div>
-            <div className="mt-1 flex min-w-0 items-center gap-1 text-base font-semibold text-slate-900">
-              <span className="truncate text-slate-500">{awayTeam}</span>
-              <span className="shrink-0 text-slate-300">@</span>
-              <span className="truncate">{homeTeam}</span>
+            <div className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-400">Matchup</div>
+            <div className="mt-1 flex min-w-0 items-center gap-1 text-base font-semibold text-slate-100">
+              <span className="truncate text-slate-300">{awayTeam}</span>
+              <span className="shrink-0 text-slate-500">@</span>
+              <span className="truncate text-slate-50">{homeTeam}</span>
             </div>
           </div>
           <div className="shrink-0 text-right">
-            <div className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-400">{MODE_LABELS[settings.mode]}</div>
+            <div className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-400">{MODE_LABELS[settings.mode]}</div>
             <div className={`mt-1 text-2xl font-bold tabular-nums ${probabilityColorClass}`}>{pct}</div>
           </div>
         </div>
 
-        <div className="mt-3 grid gap-2 text-sm text-slate-600">
+        <div className="mt-3 grid gap-2 text-sm">
           <PitcherRow label="Away SP" pitcher={game.awayPitcher} />
           <PitcherRow label="Home SP" pitcher={game.homePitcher} />
         </div>
 
         <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-          <Metric label="Bet at" value={odds} valueClassName={showOddsUnavailable ? 'text-slate-300' : 'text-slate-700'} />
+          <Metric label="Bet at" value={odds} valueClassName={showOddsUnavailable ? 'text-slate-500' : 'text-slate-200'} />
           <Metric label="Result" value={<MobileResultBadge game={game} mode={settings.mode} />} />
           <Metric label="First pitch" value={time} />
           <Metric label="Weather" value={weatherSummary} />
@@ -129,7 +128,7 @@ function MobileCard({ game }: { game: GameResult }) {
         }}
       >
         <div style={{ overflow: 'hidden' }}>
-          <div className="border-t border-slate-100 px-4 pb-4 pt-3" onClick={e => e.stopPropagation()}>
+          <div className="border-t border-slate-700/50 px-4 pb-4 pt-3" onClick={e => e.stopPropagation()}>
             <MatchupDetail game={game} />
           </div>
         </div>
@@ -142,7 +141,6 @@ export default function GameTable({ games, label }: GameTableProps) {
   const { settings } = useSettings()
   if (games.length === 0) return null
 
-  // Server order is YRFI-descending; re-sort so the active view's best bets lead.
   const sorted = sortForMode(games, settings.mode)
 
   return (
@@ -155,7 +153,7 @@ export default function GameTable({ games, label }: GameTableProps) {
       </div>
 
       {/* Desktop table */}
-      <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-700/50 bg-slate-800/30 backdrop-blur-sm shadow-xl">
         <table className="min-w-[1080px] w-full table-fixed text-left text-sm">
           <colgroup>
             <col className="w-[212px]" />
@@ -168,7 +166,7 @@ export default function GameTable({ games, label }: GameTableProps) {
             <col className="w-[76px]" />
             <col className="w-[92px]" />
           </colgroup>
-          <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <thead className="border-b border-slate-700/50 bg-slate-900/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
             <tr>
               <th className="px-4 py-3 whitespace-nowrap">Matchup</th>
               <th className="px-4 py-3 whitespace-nowrap">Away SP</th>
@@ -193,15 +191,15 @@ export default function GameTable({ games, label }: GameTableProps) {
 function Metric({
   label,
   value,
-  valueClassName = 'text-slate-700',
+  valueClassName = 'text-slate-200',
 }: {
   label: string
   value: React.ReactNode
   valueClassName?: string
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-      <div className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</div>
+    <div className="rounded-xl border border-slate-700/50 bg-slate-800/30 px-3 py-2.5">
+      <div className="text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</div>
       <div className={`mt-1 min-w-0 text-sm font-medium ${valueClassName}`}>{value}</div>
     </div>
   )

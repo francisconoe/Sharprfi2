@@ -1,72 +1,248 @@
 @import "katex/dist/katex.min.css";
 @import "tailwindcss";
 
+/* ============================================================
+   TEMA OSCURO CON ACENTOS VIBRANTES
+   ============================================================ */
+
+:root {
+  --color-background: #0b0e1a;
+  --color-foreground: #f1f5f9;
+  --color-card: #131a2e;
+  --color-card-hover: #1a2340;
+  --color-primary: #6366f1;
+  --color-primary-hover: #818cf8;
+  --color-secondary: #8b5cf6;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-muted: #94a3b8;
+  --color-border: #1e293b;
+  --color-ring: #6366f1;
+  --radius: 0.75rem;
+}
+
 html {
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 @layer base {
   body {
-    background-color: white;
-    color: var(--color-slate-900);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image: radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%);
+    min-height: 100vh;
+  }
+
+  /* Scrollbar personalizada */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-hover);
   }
 }
 
 @layer components {
+  /* ============================================================
+     TARJETAS Y CONTENEDORES
+     ============================================================ */
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+  .card:hover {
+    background: var(--color-card-hover);
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+  }
+
+  /* ============================================================
+     GRADIENTES Y EFECTOS DE FONDO
+     ============================================================ */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  }
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.04));
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Efecto vidrio */
+  .glass {
+    background: rgba(19, 26, 46, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* ============================================================
+     BOTONES Y ENLACES
+     ============================================================ */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* ============================================================
+     BADGES E INDICADORES
+     ============================================================ */
+  .badge-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-danger);
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+  .badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--color-warning);
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  /* Barra de confianza */
+  .confidence-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  .confidence-bar .fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  /* ============================================================
+     ANIMACIONES
+     ============================================================ */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.4); }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* ============================================================
+     FÓRMULAS MATEMÁTICAS (tema oscuro)
+     ============================================================ */
   .methodology-formula .katex-display {
     margin: 0;
   }
-
   .methodology-formula--left .katex-display {
     text-align: left;
   }
-
   .methodology-formula .katex {
     font-size: 1.08rem;
     line-height: 1.35;
+    color: var(--color-foreground);
   }
-
   .methodology-formula--odds .katex {
     font-size: 0.98rem;
   }
-
   .methodology-inline-formula .katex {
     font-size: 0.94rem;
     white-space: normal;
+    color: var(--color-foreground);
   }
-
   .methodology-card-formula .katex-display {
     margin: 0;
     text-align: center;
   }
-
   .methodology-card-formula .katex {
     font-size: 0.76rem;
     line-height: 1.15;
+    color: var(--color-foreground);
   }
 
+  /* ============================================================
+     RESPONSIVE (formulas más pequeñas en móvil)
+     ============================================================ */
   @media (max-width: 640px) {
     .methodology-formula {
       padding-inline: 0.9rem;
     }
-
     .methodology-formula .katex {
       font-size: 0.6rem;
       line-height: 1.15;
     }
-
     .methodology-formula--odds .katex {
       font-size: 0.54rem;
       line-height: 1.05;
     }
-
     .methodology-inline-formula .katex {
       font-size: 0.62rem;
       line-height: 1.1;
     }
-
     .methodology-card-formula .katex {
       font-size: 0.54rem;
       line-height: 1.05;

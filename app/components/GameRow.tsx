@@ -54,10 +54,32 @@ function formatWind(weather: GameResult['weather'], windUnit: 'mph' | 'kmh'): st
     : `${weather.windSpeedMph} mph`
 }
 
+// 🔥 Barra de confianza basada en innings de los pitchers
+function ConfidenceBar({ game }: { game: GameResult }) {
+  const homeIP = game.homePitcher.estimated ? 0 : (game.homePitcher as any).inningsPitched || 0
+  const awayIP = game.awayPitcher.estimated ? 0 : (game.awayPitcher as any).inningsPitched || 0
+  const totalIP = homeIP + awayIP
+  const confidence = Math.min(1, totalIP / 100) // 100 IP combinados = confianza plena
+  const color = confidence > 0.7 ? 'bg-emerald-400' : confidence > 0.4 ? 'bg-amber-400' : 'bg-rose-400'
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[0.6rem] font-medium uppercase tracking-wider text-slate-400">
+        Conf
+      </span>
+      <div className="h-1.5 w-16 rounded-full bg-slate-700">
+        <div
+          className={`h-1.5 rounded-full ${color} transition-all duration-500`}
+          style={{ width: `${Math.max(5, confidence * 100)}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
 function ResultBadge({ game, mode }: { game: GameResult; mode: ViewMode }) {
-  // A run scored is a YRFI win / NRFI loss, and vice versa.
-  const winBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700'
-  const lossBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600'
+  const winBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-300 border border-emerald-500/30'
+  const lossBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-300 border border-rose-500/30'
   if (game.firstInningResult === 'run') {
     return <span className={mode === 'yrfi' ? winBadge : lossBadge}>RUN</span>
   }
@@ -65,13 +87,17 @@ function ResultBadge({ game, mode }: { game: GameResult; mode: ViewMode }) {
     return <span className={mode === 'yrfi' ? lossBadge : winBadge}>NO RUN</span>
   }
   if (game.gameStatus === 'inProgress') {
-    return <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-700">IP</span>
+    return <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">IP</span>
   }
-  return <span className="inline-flex w-full justify-center text-slate-300">—</span>
+  return <span className="inline-flex w-full justify-center text-slate-500">—</span>
 }
 
 function PitcherName({ pitcher }: { pitcher: GameResult['homePitcher'] }) {
-  return <span className="block max-w-full truncate whitespace-nowrap">{pitcher.name}</span>
+  return (
+    <span className="block max-w-full truncate whitespace-nowrap text-slate-200">
+      {pitcher.name}
+    </span>
+  )
 }
 
 export default function GameRow({ game }: GameRowProps) {
@@ -92,23 +118,23 @@ export default function GameRow({ game }: GameRowProps) {
   return (
     <>
       <tr
-        className="cursor-pointer border-b border-slate-100 hover:bg-slate-50 select-none transition-[background-color,transform] duration-75 active:scale-[0.998] active:bg-slate-100"
+        className="cursor-pointer border-b border-slate-700/50 bg-slate-800/40 hover:bg-slate-700/40 select-none transition-all duration-150 active:scale-[0.998]"
         onClick={() => setExpanded(e => !e)}
       >
         {/* Matchup */}
         <td className="px-4 py-3 align-middle font-medium">
           <span className="flex min-w-0 items-center gap-1 whitespace-nowrap">
-            <span className="truncate text-slate-500">{awayTeam}</span>
-            <span className="shrink-0 text-slate-300">@</span>
-            <span className="truncate">{homeTeam}</span>
+            <span className="truncate text-slate-300">{awayTeam}</span>
+            <span className="shrink-0 text-slate-500">@</span>
+            <span className="truncate text-slate-100">{homeTeam}</span>
           </span>
         </td>
         {/* Away SP */}
-        <td className="px-4 py-3 align-middle text-sm text-slate-600">
+        <td className="px-4 py-3 align-middle text-sm">
           <PitcherName pitcher={game.awayPitcher} />
         </td>
         {/* Home SP */}
-        <td className="px-4 py-3 align-middle text-sm text-slate-600">
+        <td className="px-4 py-3 align-middle text-sm">
           <PitcherName pitcher={game.homePitcher} />
         </td>
         {/* NRFI/YRFI % */}
@@ -116,23 +142,26 @@ export default function GameRow({ game }: GameRowProps) {
           {pct}
         </td>
         {/* Bet at */}
-        <td className={`px-4 py-3 align-middle whitespace-nowrap text-center text-sm tabular-nums ${showOddsUnavailable ? 'text-slate-300' : 'font-medium text-slate-700'}`}>
+        <td className={`px-4 py-3 align-middle whitespace-nowrap text-center text-sm tabular-nums ${showOddsUnavailable ? 'text-slate-500' : 'font-medium text-slate-200'}`}>
           {odds}
         </td>
         {/* Temp */}
-        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-500">{temp}</td>
+        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-400">{temp}</td>
         {/* Wind */}
-        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-500">{wind}</td>
+        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-400">{wind}</td>
         {/* Time */}
-        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-500">{time}</td>
-        {/* Result */}
-        <td className="px-2.5 py-3 align-middle whitespace-nowrap text-center">
-          <ResultBadge game={game} mode={settings.mode} />
+        <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-400">{time}</td>
+        {/* Result + Confidence */}
+        <td className="px-2.5 py-3 align-middle whitespace-nowrap">
+          <div className="flex items-center justify-end gap-3">
+            <ResultBadge game={game} mode={settings.mode} />
+            <ConfidenceBar game={game} />
+          </div>
         </td>
       </tr>
 
       <tr>
-        <td colSpan={9} className={expanded ? 'border-b border-slate-100' : ''} style={{ padding: 0 }}>
+        <td colSpan={9} className={expanded ? 'border-b border-slate-700/50' : ''} style={{ padding: 0 }}>
           <div
             style={{
               display: 'grid',
@@ -141,7 +170,7 @@ export default function GameRow({ game }: GameRowProps) {
             }}
           >
             <div style={{ overflow: 'hidden' }}>
-              <div className="bg-slate-50/70 px-6 py-4">
+              <div className="bg-slate-900/50 px-6 py-4 backdrop-blur-sm">
                 <MatchupDetail game={game} />
               </div>
             </div>

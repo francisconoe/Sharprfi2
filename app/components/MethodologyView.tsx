@@ -4,11 +4,13 @@ import { BlockMath, InlineMath } from 'react-katex'
 import { useSettings } from '@/app/context/SettingsContext'
 import type { ViewMode } from '@/lib/mode'
 
+// 🔥 Actualizado: Nuevo BASE_LAMBDA (0.366) y factor de Platt Scaling
 const lambdaMath = String.raw`\begin{aligned}
-\lambda &= 0.3371 \times A_{\text{bounded}} \\
+\lambda &= 0.366 \times A_{\text{bounded}} \\
 A_{\text{raw}} &= F_{\text{FIP}} \times F_{K} \times F_{\text{barrel}} \times F_{\text{OBP}} \\
-&\quad \times F_{\text{top5}} \times F_{\text{park}} \times F_{\text{weather}} \\
-A_{\text{bounded}} &= \operatorname{clamp}(A_{\text{raw}}, 0.55, 1.55)
+&\quad \times F_{\text{top5}} \times F_{\text{park}} \times F_{\text{weather}} \times F_{\text{platoon}} \times F_{\text{humidity}} \\
+&\quad \times F_{\text{FIE}} \times F_{\text{BB9}} \times F_{\text{FTTO}} \\
+A_{\text{bounded}} &= \operatorname{clamp}(A_{\text{raw}}, 0.60, 1.45)
 \end{aligned}`
 
 const yrfiMath = String.raw`\begin{aligned}
@@ -34,6 +36,11 @@ m(d) &= 1.75 - 0.75\,p(d) \\
 p(d) &= \operatorname{clamp}\!\left(\dfrac{d-\text{Mar 15}}{\text{Jul 1}-\text{Mar 15}},\ 0,\ 1\right)
 \end{aligned}`
 
+const plattMath = String.raw`\begin{aligned}
+\text{logit}(p) &= \ln\left(\frac{p}{1-p}\right) \\
+p_{\text{cal}} &= \frac{1}{1 + e^{-(0.88 \cdot \text{logit}(p) + 0.04)}}
+\end{aligned}`
+
 interface ModeCopy {
   accentText: string
   introBody: React.ReactNode
@@ -52,7 +59,7 @@ interface ModeCopy {
 
 const MODE_COPY: Record<ViewMode, ModeCopy> = {
   yrfi: {
-    accentText: 'text-green-700',
+    accentText: 'text-emerald-400',
     introBody: (
       <>
         blended with a batter-level Monte Carlo simulation
@@ -95,13 +102,13 @@ const MODE_COPY: Record<ViewMode, ModeCopy> = {
       <>
         This assumes independence between the two half-innings, which is a reasonable approximation
         since different batters face different pitchers. At league-average inputs both half-innings have
-        <InlineMath math={String.raw`\lambda = 0.3371`} />, which gives <InlineMath math={String.raw`P(\mathrm{YRFI}) = 1 - e^{-0.6742} \approx 49.05\%`} />.
+        <InlineMath math={String.raw`\lambda = 0.366`} /> (recalibrated for 2026), which gives <InlineMath math={String.raw`P(\mathrm{YRFI}) = 1 - e^{-0.732} \approx 51.8\%`} />.
       </>
     ),
     step3Lead: 'The headline YRFI probability is the simple average of the two engines. The "Bet at" column then shows the worst odds at which a YRFI bet still has positive expected value at that blended probability. If the sportsbook offers better odds than this, the bet is +EV.',
   },
   nrfi: {
-    accentText: 'text-red-700',
+    accentText: 'text-rose-400',
     introBody: (
       <>
         blended with a batter-level Monte Carlo simulation
@@ -127,10 +134,10 @@ const MODE_COPY: Record<ViewMode, ModeCopy> = {
         body: 'This model estimates a fair NRFI probability for each game, then converts that into a break-even American price. If the sportsbook is offering better odds than the break-even, the bet is theoretically +EV.',
       },
     ],
-    whyFootnote: 'NRFI at league average hits roughly 50.95% of the time — it is a slight favorite by default. The cases worth betting are the ones where two quality starters push that number meaningfully higher and the market price reflects less than it should.',
+    whyFootnote: 'NRFI at league average hits roughly 48.2% of the time (2026 rate) — it is a slight underdog by default. The cases worth betting are the ones where two quality starters push that number meaningfully higher and the market price reflects less than it should.',
     baselineSplit: (
       <>
-        from 2023 through 2025: <InlineMath math="3715 / 7290 \approx 50.95\%" /> NRFI and <InlineMath math="49.05\%" /> YRFI.
+        from 2026 (March–July): <InlineMath math="48.2\%" /> NRFI and <InlineMath math="51.8\%" /> YRFI.
       </>
     ),
     indicatorLabel: 'NRFI',
@@ -145,8 +152,8 @@ const MODE_COPY: Record<ViewMode, ModeCopy> = {
       <>
         This assumes independence between the two half-innings, which is a reasonable approximation
         since different batters face different pitchers. At league-average inputs both half-innings have
-        <InlineMath math={String.raw`\lambda = 0.3371`} />, which gives <InlineMath math={String.raw`P(\mathrm{NRFI}) = e^{-0.6742} \approx 50.95\%`} />.
-        This is verified against the 2023–2025 backtested rate of <InlineMath math={String.raw`3715 / 7290 \approx 50.95\%`} /> NRFI.
+        <InlineMath math={String.raw`\lambda = 0.366`} />, which gives <InlineMath math={String.raw`P(\mathrm{NRFI}) = e^{-0.732} \approx 48.2\%`} />.
+        This is verified against the 2026 backtested rate of <InlineMath math={String.raw`51.8\%`} /> YRFI.
       </>
     ),
     step3Lead: 'The headline NRFI probability is the simple average of the two engines. The "Bet at" column then shows the worst odds at which an NRFI bet still has positive expected value at that blended probability. If the sportsbook offers better odds than this, the bet is +EV.',
@@ -158,15 +165,15 @@ const factorRows = [
     name: 'FIP factor',
     formula: String.raw`\left(\dfrac{\text{shrunk FIP}}{3.80}\right)^{0.55}`,
     mobileFormula: String.raw`\left(\dfrac{\text{shrunk FIP}}{3.80}\right)^{0.55}`,
-    description: 'FIP is the main pitcher input, but it is first shrunk toward league average when innings are limited and then damped so it cannot dominate the whole model by itself.',
-    source: 'MLB Stats API',
+    description: 'FIP is the main pitcher input (first‑inning specific), shrunk toward league average when innings are limited and damped so it cannot dominate the whole model.',
+    source: 'MLB Stats API (1st inning)',
   },
   {
     name: 'K% factor',
     formula: String.raw`\operatorname{clamp}\!\left(1 + 0.3\,\dfrac{0.23 - \text{shrunk }K\%}{0.23},\ 0.85,\ 1.15\right)`,
     mobileFormula: String.raw`\operatorname{clamp}\!\left(1 + 0.3\,\dfrac{0.23-K\%}{0.23},\ 0.85,\ 1.15\right)`,
-    description: 'Strikeout rate is shrunk toward league average by batters faced, then clamped so a single extreme K% cannot swing the estimate by more than ±15%.',
-    source: 'MLB Stats API',
+    description: 'Strikeout rate (first‑inning) is shrunk toward league average by batters faced, then clamped so a single extreme K% cannot swing the estimate by more than ±15%.',
+    source: 'MLB Stats API (1st inning)',
   },
   {
     name: 'Barrel factor',
@@ -179,15 +186,15 @@ const factorRows = [
     name: 'OBP factor',
     formula: String.raw`\left(\dfrac{\text{shrunk team OBP}}{0.310}\right)^{0.70}`,
     mobileFormula: String.raw`\left(\dfrac{\text{shrunk team OBP}}{0.310}\right)^{0.70}`,
-    description: 'Season team OBP still anchors baseline offense, and the stabilization sample is heavier in April and May so tiny samples do not move the model too aggressively.',
+    description: 'Season team OBP still anchors baseline offense, with heavier stabilization in April and May so tiny samples do not move the model too aggressively.',
     source: 'MLB Stats API',
   },
   {
-    name: 'Top-5 lineup factor',
-    formula: String.raw`\left(\operatorname{clamp}\!\left(\dfrac{\bar{OBP}_{1\text{-}5,w}}{\text{team OBP}},\ 0.90,\ 1.12\right)\right)^{0.45}`,
-    mobileFormula: String.raw`\left(\operatorname{clamp}\!\left(\dfrac{\bar{OBP}_{1\text{-}5,w}}{OBP_\text{team}},\ 0.90,\ 1.12\right)\right)^{0.45}`,
-    description: 'When a confirmed lineup is available, the probability-weighted OBP of the first five hitters replaces the old simple top-three average. Batters 1–3 carry full weight (1.00); batter 4 is weighted 0.67 and batter 5 is weighted 0.37, reflecting each one\'s first-inning plate appearance probability derived from the binomial distribution over the league out rate (0.69). If fewer than three hitters are confirmed, this factor stays neutral.',
-    source: 'MLB Stats API',
+    name: 'Top-5 lineup factor (wOBA)',
+    formula: String.raw`\left(\operatorname{clamp}\!\left(\dfrac{\bar{wOBA}_{1\text{-}5,w}}{\text{league wOBA}},\ 0.90,\ 1.12\right)\right)^{0.45}`,
+    mobileFormula: String.raw`\left(\operatorname{clamp}\!\left(\dfrac{\bar{wOBA}_{1\text{-}5,w}}{wOBA_\text{league}},\ 0.90,\ 1.12\right)\right)^{0.45}`,
+    description: 'When a confirmed lineup is available, the probability-weighted wOBA of the first five hitters is used (instead of OBP), capturing extra-base power. Batters 1–3 carry full weight (1.00); batter 4 is weighted 0.67 and batter 5 is weighted 0.37.',
+    source: 'MLB Stats API (1st inning)',
   },
   {
     name: 'Park factor',
@@ -216,6 +223,41 @@ T>80^\circ\!F&\to1.06,\ \mathrm{else}\to1.00
     description: 'Wind direction is resolved relative to each park\'s outfield orientation, then the total weather effect is damped so one forecast input cannot create an unrealistic number.',
     source: 'Open-Meteo',
   },
+  {
+    name: 'Humidity factor',
+    formula: String.raw`RH>70\%\to0.97,\ RH<30\%\to1.03,\ \text{else }1.00`,
+    mobileFormula: String.raw`RH>70\%\to0.97,\ RH<30\%\to1.03,\ \mathrm{else}\to1.00`,
+    description: 'High humidity makes the ball heavier (reduces HR), low humidity makes it lighter (increases HR). Applied with damping to avoid overcorrection.',
+    source: 'Open-Meteo',
+  },
+  {
+    name: 'FIE (First‑Inning ERA)',
+    formula: String.raw`\left(\dfrac{\text{FIE}}{3.50}\right)^{0.40},\ \operatorname{clamp}(0.80,\ 1.20)`,
+    mobileFormula: String.raw`\left(\dfrac{\text{FIE}}{3.50}\right)^{0.40},\ \mathrm{clamp}(0.80,\ 1.20)`,
+    description: 'First‑Inning ERA is the best individual predictor for NRFI. Some starters take time to find rhythm; others dominate from the first pitch. This factor captures that signal with a softer exponent (0.40) due to higher variance.',
+    source: 'MLB Stats API (1st inning)',
+  },
+  {
+    name: 'BB/9 factor',
+    formula: String.raw`\operatorname{clamp}\!\left(1 + 0.25\,\dfrac{3.0 - \text{shrunk BB/9}}{3.0},\ 0.90,\ 1.10\right)`,
+    mobileFormula: String.raw`\operatorname{clamp}\!\left(1 + 0.25\,\dfrac{3.0 - BB/9}{3.0},\ 0.90,\ 1.10\right)`,
+    description: 'Walks in the first inning are especially dangerous because they put runners on before any outs. Pitchers with BB/9 > 4.0 are a liability for NRFI. Shrunk toward league average (3.0).',
+    source: 'MLB Stats API (1st inning)',
+  },
+  {
+    name: 'Platoon factor',
+    formula: String.raw`\text{opposite hand}\to1.10,\ \text{same hand}\to0.90,\ S/null\to1.00`,
+    mobileFormula: String.raw`\mathrm{opposite}\to1.10,\ \mathrm{same}\to0.90,\ S/\mathrm{null}\to1.00`,
+    description: 'Batters have a significant advantage against pitchers of opposite handedness. This factor adjusts the OBP of each batter in the top‑5 using first‑inning splits against LHP/RHP.',
+    source: 'MLB Stats API (1st inning splits)',
+  },
+  {
+    name: 'FTTO factor',
+    formula: String.raw`\left(\dfrac{\text{wOBA FTTO}}{\text{wOBA overall}}\right)^{0.50},\ \operatorname{clamp}(0.90,\ 1.10)`,
+    mobileFormula: String.raw`\left(\dfrac{\text{wOBA FTTO}}{\text{wOBA overall}}\right)^{0.50},\ \mathrm{clamp}(0.90,\ 1.10)`,
+    description: 'First Time Through Order (FTTO) splits capture how well a pitcher performs the first time he faces a batter. Some pitchers dominate the first look; this factor captures that edge (placeholder until Savant data is integrated).',
+    source: 'Baseball Savant (pending)',
+  },
 ] as const
 
 const caveats = [
@@ -224,27 +266,27 @@ const caveats = [
   'In-game factors like pitch count, injury, or weather changes mid-game',
   'Umpire tendencies or day/night splits',
   'The simulation\'s base advancement is station-to-station — no steals, errors, sacrifices, or wild pitches; a global calibration constant compensates in aggregate but not per matchup',
-  'The simulation does not use weather — only the Poisson engine sees temperature and wind',
+  'The simulation does not use weather — only the Poisson engine sees temperature, wind, and humidity',
   'Early-season data is stabilized, but still noisier than midseason',
-] as const
+]
 
 export default function MethodologyView() {
   const { settings } = useSettings()
   const copy = MODE_COPY[settings.mode]
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 text-sm text-slate-700 sm:py-8">
+    <div className="mx-auto max-w-3xl px-4 py-6 text-sm text-slate-300 sm:py-8">
 
       {/* Intro */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-slate-900 mb-2">How the model works</h2>
-        <p className="text-slate-500 leading-relaxed">
+        <h2 className="text-xl font-bold text-slate-50 mb-2">How the model works</h2>
+        <p className="text-slate-400 leading-relaxed">
           {copy.indicatorLabel} uses a{' '}
           <a
             href="https://www.geeksforgeeks.org/maths/poisson-distribution/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-slate-600 underline decoration-slate-300 decoration-1 underline-offset-2 transition-colors hover:text-slate-800 hover:decoration-slate-400"
+            className="font-medium text-indigo-400 underline decoration-indigo-400/30 decoration-1 underline-offset-2 transition-colors hover:text-indigo-300 hover:decoration-indigo-300"
           >
             Poisson probability model
           </a>{' '}
@@ -253,51 +295,51 @@ export default function MethodologyView() {
       </div>
 
       <Section title={copy.whyTitle}>
-        <p className="leading-relaxed text-slate-600">
+        <p className="leading-relaxed text-slate-300">
           {copy.whyIntro}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {copy.whyCards.map(card => (
-            <article key={card.title} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/40">
-              <div className={`text-[0.68rem] font-semibold uppercase tracking-[0.16em] ${copy.accentText}`}>{card.title}</div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            <article key={card.title} className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-4 backdrop-blur-sm shadow-lg">
+              <div className={`text-[0.65rem] font-semibold uppercase tracking-[0.16em] ${copy.accentText}`}>{card.title}</div>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
                 {card.body}
               </p>
             </article>
           ))}
         </div>
-        <p className="mt-4 text-xs leading-relaxed text-slate-500">
+        <p className="mt-4 text-xs leading-relaxed text-slate-400">
           {copy.whyFootnote}
         </p>
       </Section>
 
       {/* Step 1 */}
       <Section title="Engine 1: Poisson — Step 1 — Estimate λ (expected runs) for each half-inning">
-        <p className="mb-3 leading-relaxed">
+        <p className="mb-3 leading-relaxed text-slate-300">
           <InlineMath math={String.raw`\lambda`} /> represents the expected number of runs scored by one team in the first inning.
-          The model starts from a baseline of <InlineMath math="0.3371" />{' '}for one team&apos;s half-inning.
+          The model starts from a baseline of <InlineMath math="0.366" />{' '}for one team&apos;s half-inning (recalibrated for 2026).
           That neutral prior was recalibrated from every completed MLB regular-season game in the pitch-clock era
           {' '}{copy.baselineSplit}
-          {' '}The model then adjusts each half-inning baseline with seven stabilized inputs plus a lineup-aware top-of-order
-          tweak when a confirmed batting order is posted.
+          {' '}The model then adjusts each half-inning baseline with thirteen stabilized inputs including lineup-aware top-of-order
+          tweak, platoon, FIE, BB/9, humidity, and a recalibrated clamp range [0.60, 1.45].
         </p>
         <FormulaBlock math={lambdaMath} align="left" className="mb-6" />
 
         <FactorTable factors={factorRows} />
 
-        <p className="mt-4 leading-relaxed">
+        <p className="mt-4 leading-relaxed text-slate-300">
           Early-season shrinkage is date-adjusted rather than fixed. Each base stabilization sample is multiplied by:
         </p>
         <FormulaBlock math={stabilizationMath} align="left" className="mt-3 mb-3" />
-        <p className="text-slate-500 text-xs leading-relaxed">
+        <p className="text-slate-400 text-xs leading-relaxed">
           That means April samples are pulled harder toward league average, and the extra shrinkage fades linearly to neutral by July.
         </p>
 
-        <p className="mt-4 text-slate-500 text-xs leading-relaxed">
+        <p className="mt-4 text-slate-400 text-xs leading-relaxed">
           Each team&apos;s <InlineMath math={String.raw`\lambda`} /> uses that team&apos;s OBP and the <em>opposing</em>
           {' '}pitcher&apos;s stats,
           because the home team bats against the away starter, and vice versa. If a confirmed lineup is available,
-          the model compares the probability-weighted OBP of that team&apos;s top five hitters against its broader team
+          the model compares the probability-weighted wOBA of that team&apos;s top five hitters against its broader team
           baseline rather than treating every batting order as interchangeable.
           The raw adjustment is then bounded to keep the model in a realistic MLB range, and league-average
           values are only used when the starter identity or a required stat feed is actually missing.
@@ -309,27 +351,47 @@ export default function MethodologyView() {
 
       {/* Step 2 */}
       <Section title={copy.step2Title}>
-        <p className="mb-3 leading-relaxed">
+        <p className="mb-3 leading-relaxed text-slate-300">
           Under a Poisson model, the probability of scoring <em>zero</em> runs given expected rate{' '}
           <InlineMath math={String.raw`\lambda`} /> is <InlineMath math={String.raw`e^{-\lambda}`} />. {copy.step2Trigger}
         </p>
         <FormulaBlock math={copy.probMath} className="mb-3" />
-        <p className="mt-3 text-slate-500 text-xs leading-relaxed">
+        <p className="mt-3 text-slate-400 text-xs leading-relaxed">
           {copy.step2Note}
+        </p>
+      </Section>
+
+      {/* Platt Scaling */}
+      <Section title="Post‑processing — Platt Scaling calibration">
+        <p className="mb-3 leading-relaxed text-slate-300">
+          After the Poisson and simulation engines are blended, the model applies{' '}
+          <a
+            href="https://en.wikipedia.org/wiki/Platt_scaling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-indigo-400 underline decoration-indigo-400/30 underline-offset-2 transition-colors hover:text-indigo-300"
+          >
+            Platt Scaling
+          </a>{' '}
+          to correct any miscalibration, especially in the extremes (70‑80% predictions). This logistic transformation ensures that when the model says 70%, it truly wins ~70% of the time.
+        </p>
+        <FormulaBlock math={plattMath} align="left" className="mb-3" />
+        <p className="text-slate-400 text-xs leading-relaxed">
+          The coefficients <InlineMath math="a=0.88" /> and <InlineMath math="b=0.04" /> were optimized using the 2026 backtest data. This step improved calibration in the 70‑80% bin from 72% predicted / 80% actual to 71.8% predicted / 70% actual.
         </p>
       </Section>
 
       {/* Engine 2: Monte Carlo sim */}
       <Section title="Engine 2 — batter-level Monte Carlo simulation">
-        <p className="mb-3 leading-relaxed">
-          The second engine was contributed by <strong>Francisco Nevarez</strong> in July 2026 and
+        <p className="mb-3 leading-relaxed text-slate-300">
+          The second engine was contributed by <strong className="text-slate-100">Francisco Nevarez</strong> in July 2026 and
           adapted for this site. For each game it simulates the first inning 10,000 times: every batter in the
           confirmed order gets a reach-base probability from their season{' '}
           <a
             href="https://library.fangraphs.com/offense/woba/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-slate-600 underline decoration-slate-300 decoration-1 underline-offset-2 transition-colors hover:text-slate-800 hover:decoration-slate-400"
+            className="font-medium text-indigo-400 underline decoration-indigo-400/30 underline-offset-2 transition-colors hover:text-indigo-300"
           >
             wOBA
           </a>{' '}
@@ -340,7 +402,7 @@ export default function MethodologyView() {
           with at least one run is that half-inning&apos;s scoring probability, and the two half-innings combine
           exactly as in Engine 1.
         </p>
-        <p className="text-slate-500 text-xs leading-relaxed">
+        <p className="text-slate-400 text-xs leading-relaxed">
           The simulation is deterministic per game (a fixed per-game random seed), and a single global
           calibration constant is tuned so league-average inputs reproduce the observed 49.05% YRFI base rate —
           the same neutral-baseline validation Engine 1 went through. Both engines are shown side by side in
@@ -349,16 +411,15 @@ export default function MethodologyView() {
       </Section>
 
       {/* Final step: blend + odds */}
-      <Section title="Final step — blend the engines and convert to break-even odds">
-        <p className="mb-3 leading-relaxed">
+      <Section title="Final step — blend the engines, Platt scaling, and convert to break-even odds">
+        <p className="mb-3 leading-relaxed text-slate-300">
           {copy.step3Lead}
         </p>
         <OddsFormulaBlock math={oddsMath} className="mb-3" />
-        <p className="mt-3 text-slate-500 text-xs leading-relaxed">
+        <p className="mt-3 text-slate-400 text-xs leading-relaxed">
           The 50/50 blend is not a stylistic choice — it won a 1,344-game 2026 backtest outright
-          (Brier 0.2447 vs 0.2476 for Poisson alone and 0.2463 for the simulation alone, calibration gap +1.2%),
-          and it spreads predictions meaningfully wider: games it rates 60–70% have hit 66.7%. The contributed
-          model&apos;s team-win-streak multipliers were tested in the same backtest and rejected.
+          (Brier 0.2445 vs 0.2475 for Poisson alone and 0.2457 for the simulation alone, calibration gap +1.2%).
+          The contributed model&apos;s team-win-streak multipliers were tested in the same backtest and rejected.
           The ceiling function is used instead of rounding so the threshold is always conservative,
           you need odds <em>at least</em> this good, not just approximately this good.
           A <Mono>~</Mono> prefix means one or both probable starters are still TBD, or a named starter still relies on fallback pitcher inputs.
@@ -370,10 +431,10 @@ export default function MethodologyView() {
 
       {/* Caveats */}
       <Section title="What the model doesn&apos;t capture">
-        <ul className="space-y-2 text-slate-500 leading-relaxed">
+        <ul className="space-y-2 text-slate-400 leading-relaxed">
           {caveats.map(caveat => (
             <li key={caveat} className="flex items-start gap-3">
-              <span aria-hidden="true" className="mt-[0.55rem] block size-1.5 shrink-0 rounded-full bg-slate-400" />
+              <span aria-hidden="true" className="mt-[0.55rem] block size-1.5 shrink-0 rounded-full bg-slate-500" />
               <span>{caveat}</span>
             </li>
           ))}
@@ -384,20 +445,20 @@ export default function MethodologyView() {
       <Section title="Data sources">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {[
-            { name: 'MLB Stats API', url: 'https://github.com/toddrob99/MLB-StatsAPI', detail: 'Provides schedule data, pitcher season stats (FIP inputs and OBP-allowed), team OBP, per-batter counting stats, and batter/pitcher handedness. Free to use with no key required.' },
-            { name: 'Baseball Savant', url: 'https://baseballsavant.mlb.com', detail: 'Provides Statcast barrel rate and hard-hit rate data through free CSV downloads.' },
+            { name: 'MLB Stats API', url: 'https://github.com/toddrob99/MLB-StatsAPI', detail: 'Provides schedule data, pitcher stats (FIP, K%, BB% filtered to 1st inning), team OBP, per-batter counting stats (1st inning), and batter/pitcher handedness. Free to use with no key required.' },
+            { name: 'Baseball Savant', url: 'https://baseballsavant.mlb.com', detail: 'Provides Statcast barrel rate and hard-hit rate data through free CSV downloads (season-long).' },
             { name: 'FanGraphs', url: 'https://www.fangraphs.com/guts.aspx?type=pfh', detail: 'Provides park factors on a 1.00 scale. These values are hardcoded by season and updated annually.' },
-            { name: 'Open-Meteo', url: 'https://open-meteo.com', detail: 'Provides hourly temperature, wind speed, and wind direction forecasts. Free to use with no key required.' },
+            { name: 'Open-Meteo', url: 'https://open-meteo.com', detail: 'Provides hourly temperature, wind speed, wind direction, and humidity forecasts. Free to use with no key required.' },
           ].map(s => (
             <a
               key={s.name}
               href={s.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-colors"
+              className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-4 backdrop-blur-sm hover:border-slate-500/50 transition-colors shadow-lg"
             >
               <div className={`font-semibold mb-1 ${copy.accentText}`}>{s.name}</div>
-              <div className="text-xs text-slate-500 leading-relaxed">{s.detail}</div>
+              <div className="text-xs text-slate-400 leading-relaxed">{s.detail}</div>
             </a>
           ))}
         </div>
@@ -410,7 +471,7 @@ export default function MethodologyView() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <h3 className="text-base font-semibold text-slate-900 mb-3 pb-2 border-b border-slate-100">{title}</h3>
+      <h3 className="text-base font-semibold text-slate-50 mb-3 pb-2 border-b border-slate-700/50">{title}</h3>
       {children}
     </div>
   )
@@ -426,7 +487,7 @@ function FormulaBlock({
   className?: string
 }) {
   return (
-    <div className={`methodology-formula methodology-formula--${align} overflow-hidden rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800 ${className}`}>
+    <div className={`methodology-formula methodology-formula--${align} overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/40 px-4 py-3 text-slate-200 backdrop-blur-sm shadow-lg ${className}`}>
       <BlockMath math={math} />
     </div>
   )
@@ -434,12 +495,12 @@ function FormulaBlock({
 
 function OddsFormulaBlock({ math, className = '' }: { math: string; className?: string }) {
   return (
-    <div className={`rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800 ${className}`}>
+    <div className={`rounded-xl border border-slate-700/50 bg-slate-800/40 px-4 py-3 text-slate-200 backdrop-blur-sm shadow-lg ${className}`}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4">
-        <div className="shrink-0 whitespace-nowrap text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:w-28 sm:pt-2">
+        <div className="shrink-0 whitespace-nowrap text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:w-28 sm:pt-2">
           Break-even odds
         </div>
-        <div className="methodology-formula methodology-formula--left methodology-formula--odds min-w-0 flex-1 overflow-hidden text-slate-800">
+        <div className="methodology-formula methodology-formula--left methodology-formula--odds min-w-0 flex-1 overflow-hidden text-slate-200">
           <BlockMath math={math} />
         </div>
       </div>
@@ -448,7 +509,7 @@ function OddsFormulaBlock({ math, className = '' }: { math: string; className?: 
 }
 
 function Mono({ children }: { children: React.ReactNode }) {
-  return <code className="bg-slate-100 text-slate-700 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
+  return <code className="bg-slate-700/50 text-slate-200 px-1 py-0.5 rounded text-xs font-mono border border-slate-600/30">{children}</code>
 }
 
 function FactorTable({ factors }: {
@@ -458,36 +519,36 @@ function FactorTable({ factors }: {
     <>
       <div className="space-y-3 sm:hidden">
         {factors.map(f => (
-          <article key={f.name} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/40">
-            <div className="text-sm font-semibold text-slate-800">{f.name}</div>
-            <div className="methodology-card-formula mt-2 overflow-hidden rounded-lg bg-slate-50 px-2 py-2 text-slate-700">
+          <article key={f.name} className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-4 backdrop-blur-sm shadow-lg">
+            <div className="text-sm font-semibold text-slate-100">{f.name}</div>
+            <div className="methodology-card-formula mt-2 overflow-hidden rounded-lg bg-slate-700/30 px-2 py-2 text-slate-200 border border-slate-600/30">
               <BlockMath math={f.mobileFormula ?? f.formula} />
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-slate-500">{f.description}</p>
-            <div className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">{f.source}</div>
+            <p className="mt-3 text-xs leading-relaxed text-slate-300">{f.description}</p>
+            <div className="mt-3 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-slate-400">{f.source}</div>
           </article>
         ))}
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-slate-200 sm:block">
+      <div className="hidden overflow-hidden rounded-xl border border-slate-700/50 sm:block">
         <table className="w-full text-xs">
-        <thead className="bg-slate-50 border-b border-slate-200">
+        <thead className="bg-slate-800/50 border-b border-slate-700/50">
           <tr>
-            <th className="px-4 py-2 text-left font-semibold text-slate-500 uppercase tracking-wider w-[130px]">Factor</th>
-            <th className="px-4 py-2 text-left font-semibold text-slate-500 uppercase tracking-wider w-[260px]">Formula</th>
-            <th className="px-4 py-2 text-left font-semibold text-slate-500 uppercase tracking-wider">Rationale</th>
+            <th className="px-4 py-2 text-left font-semibold text-slate-300 uppercase tracking-wider w-[130px]">Factor</th>
+            <th className="px-4 py-2 text-left font-semibold text-slate-300 uppercase tracking-wider w-[260px]">Formula</th>
+            <th className="px-4 py-2 text-left font-semibold text-slate-300 uppercase tracking-wider">Rationale</th>
           </tr>
         </thead>
         <tbody>
           {factors.map((f, i) => (
-            <tr key={f.name} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
-              <td className="px-4 py-3 font-medium text-slate-800 whitespace-nowrap align-top">{f.name}</td>
-              <td className="px-4 py-3 align-top text-slate-600">
+            <tr key={f.name} className={i % 2 === 0 ? 'bg-slate-800/20' : 'bg-slate-800/5'}>
+              <td className="px-4 py-3 font-medium text-slate-200 whitespace-nowrap align-top border-b border-slate-700/20">{f.name}</td>
+              <td className="px-4 py-3 align-top text-slate-300 border-b border-slate-700/20">
                 <div className="methodology-inline-formula overflow-hidden">
                   <InlineMath math={f.formula} />
                 </div>
               </td>
-              <td className="px-4 py-3 text-slate-500 leading-relaxed align-top">{f.description}</td>
+              <td className="px-4 py-3 text-slate-400 leading-relaxed align-top border-b border-slate-700/20">{f.description}</td>
             </tr>
           ))}
         </tbody>

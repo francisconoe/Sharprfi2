@@ -2,6 +2,27 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import Papa from 'papaparse'
 
+// ============================================================
+// 🔥 Platt Scaling para recalibrar probabilidades (coeficientes
+// alineados con route.ts)
+// ============================================================
+const PLATT_A = 0.85
+const PLATT_B = 0.05
+const APPLY_PLATT_SCALING = true // cambia a false para desactivar
+
+function plattScale(p) {
+  if (!APPLY_PLATT_SCALING) return p
+  const clipped = Math.min(Math.max(p, 0.001), 0.999)
+  const logit = Math.log(clipped / (1 - clipped))
+  const calibratedLogit = PLATT_A * logit + PLATT_B
+  const calibrated = 1 / (1 + Math.exp(-calibratedLogit))
+  return Math.min(Math.max(calibrated, 0.01), 0.99)
+}
+
+// ============================================================
+// CONSTANTES
+// ============================================================
+
 const LEAGUE_AVG_FIP = 3.8
 const LEAGUE_AVG_K_PCT = 0.23
 const LEAGUE_AVG_BARREL_PCT = 8.0
@@ -973,10 +994,14 @@ async function run() {
       const actual = getActualYrfi(await fetchLinescore(game.gamePk))
       if (actual === null) return
 
+      // 🔥 Aplicar Platt Scaling a la predicción del Poisson
+      const rawPoissonPred = computeYrfiProbability(lambdaHome, lambdaAway)
+      const poissonPred = plattScale(rawPoissonPred)
+
       const predictionRow = {
         gamePk: game.gamePk,
         date,
-        prediction: computeYrfiProbability(lambdaHome, lambdaAway),
+        prediction: poissonPred,
         actual,
       }
       seenGamePks.add(game.gamePk)
@@ -1013,10 +1038,13 @@ async function run() {
           outfieldFacingDegrees: stadium.outfieldFacingDegrees,
         })
 
+        const rawLegacyPred = computeYrfiProbability(legacyLambdaHome, legacyLambdaAway)
+        const legacyPred = plattScale(rawLegacyPred)
+
         const legacyPredictionRow = {
           gamePk: game.gamePk,
           date,
-          prediction: computeYrfiProbability(legacyLambdaHome, legacyLambdaAway),
+          prediction: legacyPred,
           actual,
         }
         legacyPredictions.push(legacyPredictionRow)
@@ -1055,10 +1083,13 @@ async function run() {
           outfieldFacingDegrees: stadium.outfieldFacingDegrees,
         })
 
+        const rawInfoPred = computeYrfiProbability(infoLambdaHome, infoLambdaAway)
+        const infoPred = plattScale(rawInfoPred)
+
         const infoPredictionRow = {
           gamePk: game.gamePk,
           date,
-          prediction: computeYrfiProbability(infoLambdaHome, infoLambdaAway),
+          prediction: infoPred,
           actual,
         }
         infoPredictions.push(infoPredictionRow)
@@ -1099,13 +1130,23 @@ async function run() {
           homePitcher: homePitcherSim,
         }
 
+        // Simulación sin rachas
+        const rawSimFixed = simGameYrfi(baseInputs)
+        const simFixed = plattScale(rawSimFixed)
+        // Con rachas
+        const rawSimStreak = simGameYrfi({ ...baseInputs, awayStreakFactor, homeStreakFactor })
+        const simStreak = plattScale(rawSimStreak)
+        // Faithful
+        const rawSimFaithful = simGameYrfi({ ...baseInputs, awayStreakFactor, homeStreakFactor, faithful: true })
+        const simFaithful = plattScale(rawSimFaithful)
+
         const rows = [
-          [simFixedPredictions, dateSimFixedPredictions, simGameYrfi(baseInputs)],
-          [simStreakPredictions, dateSimStreakPredictions, simGameYrfi({ ...baseInputs, awayStreakFactor, homeStreakFactor })],
-          [simFaithfulPredictions, dateSimFaithfulPredictions, simGameYrfi({ ...baseInputs, awayStreakFactor, homeStreakFactor, faithful: true })],
+          [simFixedPredictions, dateSimFixedPredictions, simFixed],
+          [simStreakPredictions, dateSimStreakPredictions, simStreak],
+          [simFaithfulPredictions, dateSimFaithfulPredictions, simFaithful],
         ]
-        for (const [allRows, dateRows, prediction] of rows) {
-          const row = { gamePk: game.gamePk, date, prediction, actual }
+        for (const [allRows, dateRows, pred] of rows) {
+          const row = { gamePk: game.gamePk, date, prediction: pred, actual }
           allRows.push(row)
           dateRows.push(row)
         }
@@ -1152,7 +1193,7 @@ async function run() {
   console.log(`Brier score:           ${brierScore.toFixed(4)}`)
   console.log('')
 
-  // 🔥 BINS MEJORADOS: más finos para diagnosticar extremos
+  // 🔥 BINS MEJORADOS
   const bins = [
     { min: 0.0, max: 0.30, label: '< 30%' },
     { min: 0.30, max: 0.40, label: '30-40%' },
@@ -1163,7 +1204,7 @@ async function run() {
     { min: 0.80, max: 1.01, label: '≥ 80%' },
   ]
 
-  console.log('Calibration bins:')
+  console.log('Calibration bins (with Platt Scaling):')
   for (const bin of bins) {
     const rows = predictions.filter(row => row.prediction >= bin.min && row.prediction < bin.max)
     if (rows.length === 0) continue
@@ -1176,7 +1217,7 @@ async function run() {
     const { avgPrediction: legacyAvgPrediction, actualRate: legacyActualRate, calibrationGap: legacyCalibrationGap, brierScore: legacyBrierScore } = summarizePredictions(legacyPredictions)
 
     console.log('')
-    console.log('Legacy comparison:')
+    console.log('Legacy comparison (with Platt Scaling):')
     console.log(`Legacy average predicted YRFI: ${formatPct(legacyAvgPrediction)}`)
     console.log(`Legacy actual YRFI rate:      ${formatPct(legacyActualRate)}`)
     console.log(`Legacy calibration gap:       ${formatPct(legacyCalibrationGap)}`)
@@ -1189,12 +1230,18 @@ async function run() {
     const poissonByGame = new Map(predictions.map(row => [row.gamePk, row]))
     const buildBlend = simRows => simRows
       .filter(row => poissonByGame.has(row.gamePk))
-      .map(row => ({
-        gamePk: row.gamePk,
-        date: row.date,
-        prediction: (row.prediction + poissonByGame.get(row.gamePk).prediction) / 2,
-        actual: row.actual,
-      }))
+      .map(row => {
+        const poissonPred = poissonByGame.get(row.gamePk).prediction
+        const rawBlend = (row.prediction + poissonPred) / 2
+        // Para el blend, también aplicamos Platt Scaling (aunque ya estén recalibrados, el promedio puede descalibrarse)
+        // Aplicamos de nuevo si queremos mantener consistencia, pero lo dejamos como está porque ya están escalados.
+        return {
+          gamePk: row.gamePk,
+          date: row.date,
+          prediction: (row.prediction + poissonPred) / 2,
+          actual: row.actual,
+        }
+      })
 
     const variants = [
       ['Poisson (current)', predictions],
@@ -1206,7 +1253,7 @@ async function run() {
     ]
 
     console.log('')
-    console.log('Model comparison (sim):')
+    console.log('Model comparison (sim) — with Platt Scaling:')
     console.log('  variant                    | n     | avgPred | actual | calGap  | Brier')
     let best = null
     for (const [label, rows] of variants) {
@@ -1222,7 +1269,7 @@ async function run() {
     console.log(`Best variant: ${best.label} (Brier ${best.brier.toFixed(4)}, calibration gap ${formatPct(best.calGap)})`)
 
     console.log('')
-    console.log(`Calibration bins — ${best.label}:`)
+    console.log(`Calibration bins — ${best.label} (with Platt Scaling):`)
     for (const bin of bins) {
       const rows = best.rows.filter(row => row.prediction >= bin.min && row.prediction < bin.max)
       if (rows.length === 0) continue
@@ -1236,7 +1283,7 @@ async function run() {
     const { avgPrediction: infoAvgPrediction, actualRate: infoActualRate, calibrationGap: infoCalibrationGap, brierScore: infoBrierScore } = summarizePredictions(infoPredictions)
 
     console.log('')
-    console.log('Information taper comparison:')
+    console.log('Information taper comparison (with Platt Scaling):')
     console.log(`Information average predicted YRFI: ${formatPct(infoAvgPrediction)}`)
     console.log(`Information actual YRFI rate:      ${formatPct(infoActualRate)}`)
     console.log(`Information calibration gap:       ${formatPct(infoCalibrationGap)}`)

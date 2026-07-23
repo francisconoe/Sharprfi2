@@ -1,3 +1,5 @@
+// lib/site.ts
+
 function stripTrailingSlash(url: string): string {
   return url.endsWith('/') ? url.slice(0, -1) : url
 }
@@ -14,4 +16,10 @@ export function getSiteUrl(): string {
   return stripTrailingSlash(rawUrl)
 }
 
-export const SITE_NAME = 'SHARPRFI'
+// 🔥 NUEVO NOMBRE
+export const SITE_NAME = 'RenteriaFirstInning Predictor'
+
+// 🔥 Función auxiliar para usar el nombre en otros componentes
+export function getSiteName(): string {
+  return SITE_NAME
+}

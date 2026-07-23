@@ -14,10 +14,10 @@ function verdictForProbability(probability: number, mode: ViewMode): { label: st
   const pct = probability * 100
   const side = MODE_LABELS[mode]
   const other = MODE_LABELS[OTHER_MODE[mode]]
-  if (pct >= 60) return { label: `BET ${side}`, className: 'bg-green-100 text-green-700' }
-  if (pct >= 45) return { label: 'NO BET', className: 'bg-yellow-100 text-yellow-700' }
-  if (pct >= 41) return { label: `LEAN ${other}`, className: 'bg-orange-100 text-orange-700' }
-  return { label: `BET ${other}`, className: 'bg-red-100 text-red-600' }
+  if (pct >= 60) return { label: `BET ${side}`, className: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' }
+  if (pct >= 45) return { label: 'NO BET', className: 'bg-amber-500/20 text-amber-300 border border-amber-500/30' }
+  if (pct >= 41) return { label: `LEAN ${other}`, className: 'bg-orange-500/20 text-orange-300 border border-orange-500/30' }
+  return { label: `BET ${other}`, className: 'bg-rose-500/20 text-rose-300 border border-rose-500/30' }
 }
 
 function parseAmericanOdds(raw: string): number | null {
@@ -40,9 +40,9 @@ export default function EvCalculator({
   const verdict = verdictForProbability(probability, mode)
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3">
+    <div className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-3 backdrop-blur-sm shadow-lg">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400">
+        <div className="text-[0.6rem] font-semibold uppercase tracking-wider text-slate-400">
           Bet value ({MODE_LABELS[mode]})
         </div>
         <span className={`shrink-0 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ${verdict.className}`}>
@@ -52,7 +52,7 @@ export default function EvCalculator({
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <label className="flex items-center gap-2">
-          <span className="text-slate-500">Your book&apos;s {MODE_LABELS[mode]} odds</span>
+          <span className="text-slate-400">Your book&apos;s {MODE_LABELS[mode]} odds</span>
           <input
             type="text"
             inputMode="numeric"
@@ -60,7 +60,7 @@ export default function EvCalculator({
             value={oddsInput}
             onChange={e => setOddsInput(e.target.value)}
             onClick={e => e.stopPropagation()}
-            className="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-center tabular-nums text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300"
+            className="w-20 rounded-lg border border-slate-600/50 bg-slate-800/50 px-2 py-1.5 text-center tabular-nums text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/50"
           />
         </label>
 
@@ -84,10 +84,14 @@ export default function EvCalculator({
 }
 
 function Metric({ label, value, positive, neutral }: { label: string; value: string; positive?: boolean; neutral: boolean }) {
-  const valueClass = neutral ? 'text-slate-700' : positive ? 'text-green-700' : 'text-red-600'
+  const valueClass = neutral
+    ? 'text-slate-300'
+    : positive
+      ? 'text-emerald-400'
+      : 'text-rose-400'
   return (
-    <span className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-1.5">
-      <span className="text-[0.6rem] font-semibold uppercase tracking-wider text-slate-400">{label}</span>
+    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-700/50 bg-slate-800/30 px-2 py-1.5 backdrop-blur-sm">
+      <span className="text-[0.55rem] font-semibold uppercase tracking-wider text-slate-400">{label}</span>
       <span className={`font-semibold tabular-nums ${valueClass}`}>{value}</span>
     </span>
   )
