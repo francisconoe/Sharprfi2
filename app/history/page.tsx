@@ -48,6 +48,12 @@ export default function HistoryPage() {
         <p className="text-slate-400">
           No hay datos de historial disponibles. Ejecuta <code className="bg-slate-800 px-2 py-1 rounded text-xs">npm run generate-history</code> para generarlo.
         </p>
+        <Link
+          href="/"
+          className="inline-block mt-6 px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-full transition-colors"
+        >
+          ← Volver a los juegos
+        </Link>
       </div>
     )
   }
@@ -59,7 +65,8 @@ export default function HistoryPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
+      {/* 🔥 Header con botón de volver más visible */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-50">📊 Historial de resultados</h1>
           <p className="text-slate-400 text-sm mt-1">
@@ -68,12 +75,17 @@ export default function HistoryPage() {
         </div>
         <Link
           href="/"
-          className="text-slate-400 hover:text-slate-200 transition-colors text-sm flex items-center gap-1"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-full transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
         >
-          ← Volver
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+          </svg>
+          Volver a juegos
         </Link>
       </div>
 
+      {/* Resumen general */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-4 backdrop-blur-sm text-center">
           <div className="text-2xl font-bold text-slate-50">{totalGames}</div>
@@ -95,6 +107,7 @@ export default function HistoryPage() {
         </div>
       </div>
 
+      {/* Tabla de histórico */}
       <div className="overflow-x-auto rounded-xl border border-slate-700/50 bg-slate-800/40 backdrop-blur-sm shadow-lg">
         <table className="w-full text-sm">
           <thead className="bg-slate-800/50 border-b border-slate-700/50">
