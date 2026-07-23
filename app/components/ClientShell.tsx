@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import type { GamesResponse } from '@/lib/types'
 import GameTable from './GameTable'
 import StatusBar from './StatusBar'
@@ -274,7 +275,7 @@ function Shell() {
           </>
         )}
 
-        {/* 🔥 Footer con diseño moderno */}
+        {/* 🔥 Footer con diseño moderno y enlace a Historial */}
         <footer className="border-t border-slate-700/50 px-4 py-5 text-sm text-slate-400 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
             <span>
@@ -283,9 +284,17 @@ function Shell() {
               {' & '}
               <span className="font-medium text-slate-200">Lucas Reydman</span>
             </span>
-            <span className="text-xs text-slate-500">
-              © {new Date().getFullYear()} RenteriaFirstInning Predictor
-            </span>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/history"
+                className="text-slate-400 hover:text-slate-200 transition-colors text-sm"
+              >
+                📊 Historial
+              </Link>
+              <span className="text-xs text-slate-500">
+                © {new Date().getFullYear()} RenteriaFirstInning Predictor
+              </span>
+            </div>
           </div>
         </footer>
       </div>

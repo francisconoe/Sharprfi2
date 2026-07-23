@@ -52,7 +52,6 @@ export default function HistoryPage() {
     )
   }
 
-  // Calcular totales
   const totalGames = data.reduce((sum, d) => sum + d.total, 0)
   const totalCorrect = data.reduce((sum, d) => sum + d.correct, 0)
   const overallAccuracy = (totalCorrect / totalGames) * 100
@@ -75,7 +74,6 @@ export default function HistoryPage() {
         </Link>
       </div>
 
-      {/* Resumen general */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="rounded-xl border border-slate-700/50 bg-slate-800/40 p-4 backdrop-blur-sm text-center">
           <div className="text-2xl font-bold text-slate-50">{totalGames}</div>
@@ -97,7 +95,6 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Tabla de histórico */}
       <div className="overflow-x-auto rounded-xl border border-slate-700/50 bg-slate-800/40 backdrop-blur-sm shadow-lg">
         <table className="w-full text-sm">
           <thead className="bg-slate-800/50 border-b border-slate-700/50">

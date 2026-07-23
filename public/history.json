@@ -1,0 +1,716 @@
+[
+  {
+    "date": "2026-07-05",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2409
+  },
+  {
+    "date": "2026-07-04",
+    "total": 15,
+    "correct": 11,
+    "accuracy": 73.3,
+    "brier": 0.2322
+  },
+  {
+    "date": "2026-07-03",
+    "total": 13,
+    "correct": 7,
+    "accuracy": 53.8,
+    "brier": 0.2446
+  },
+  {
+    "date": "2026-07-02",
+    "total": 9,
+    "correct": 5,
+    "accuracy": 55.6,
+    "brier": 0.2397
+  },
+  {
+    "date": "2026-07-01",
+    "total": 13,
+    "correct": 10,
+    "accuracy": 76.9,
+    "brier": 0.2314
+  },
+  {
+    "date": "2026-06-30",
+    "total": 15,
+    "correct": 12,
+    "accuracy": 80,
+    "brier": 0.2287
+  },
+  {
+    "date": "2026-06-29",
+    "total": 13,
+    "correct": 9,
+    "accuracy": 69.2,
+    "brier": 0.2542
+  },
+  {
+    "date": "2026-06-28",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2491
+  },
+  {
+    "date": "2026-06-27",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2441
+  },
+  {
+    "date": "2026-06-26",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2482
+  },
+  {
+    "date": "2026-06-25",
+    "total": 8,
+    "correct": 4,
+    "accuracy": 50,
+    "brier": 0.2568
+  },
+  {
+    "date": "2026-06-24",
+    "total": 16,
+    "correct": 6,
+    "accuracy": 37.5,
+    "brier": 0.2557
+  },
+  {
+    "date": "2026-06-23",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2542
+  },
+  {
+    "date": "2026-06-22",
+    "total": 12,
+    "correct": 3,
+    "accuracy": 25,
+    "brier": 0.2645
+  },
+  {
+    "date": "2026-06-21",
+    "total": 14,
+    "correct": 7,
+    "accuracy": 50,
+    "brier": 0.2552
+  },
+  {
+    "date": "2026-06-20",
+    "total": 14,
+    "correct": 9,
+    "accuracy": 64.3,
+    "brier": 0.2446
+  },
+  {
+    "date": "2026-06-19",
+    "total": 14,
+    "correct": 6,
+    "accuracy": 42.9,
+    "brier": 0.2528
+  },
+  {
+    "date": "2026-06-18",
+    "total": 8,
+    "correct": 6,
+    "accuracy": 75,
+    "brier": 0.2389
+  },
+  {
+    "date": "2026-06-17",
+    "total": 14,
+    "correct": 10,
+    "accuracy": 71.4,
+    "brier": 0.2343
+  },
+  {
+    "date": "2026-06-16",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2412
+  },
+  {
+    "date": "2026-06-15",
+    "total": 10,
+    "correct": 7,
+    "accuracy": 70,
+    "brier": 0.2325
+  },
+  {
+    "date": "2026-06-14",
+    "total": 14,
+    "correct": 8,
+    "accuracy": 57.1,
+    "brier": 0.2403
+  },
+  {
+    "date": "2026-06-13",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2476
+  },
+  {
+    "date": "2026-06-12",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2511
+  },
+  {
+    "date": "2026-06-11",
+    "total": 7,
+    "correct": 5,
+    "accuracy": 71.4,
+    "brier": 0.2523
+  },
+  {
+    "date": "2026-06-10",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.257
+  },
+  {
+    "date": "2026-06-09",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2401
+  },
+  {
+    "date": "2026-06-08",
+    "total": 8,
+    "correct": 2,
+    "accuracy": 25,
+    "brier": 0.2566
+  },
+  {
+    "date": "2026-06-07",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2493
+  },
+  {
+    "date": "2026-06-06",
+    "total": 14,
+    "correct": 10,
+    "accuracy": 71.4,
+    "brier": 0.2396
+  },
+  {
+    "date": "2026-06-05",
+    "total": 15,
+    "correct": 11,
+    "accuracy": 73.3,
+    "brier": 0.2319
+  },
+  {
+    "date": "2026-06-04",
+    "total": 9,
+    "correct": 5,
+    "accuracy": 55.6,
+    "brier": 0.2515
+  },
+  {
+    "date": "2026-06-03",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2424
+  },
+  {
+    "date": "2026-06-02",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2448
+  },
+  {
+    "date": "2026-06-01",
+    "total": 9,
+    "correct": 6,
+    "accuracy": 66.7,
+    "brier": 0.2496
+  },
+  {
+    "date": "2026-05-31",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2413
+  },
+  {
+    "date": "2026-05-30",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.2408
+  },
+  {
+    "date": "2026-05-29",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2464
+  },
+  {
+    "date": "2026-05-28",
+    "total": 6,
+    "correct": 3,
+    "accuracy": 50,
+    "brier": 0.247
+  },
+  {
+    "date": "2026-05-27",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2421
+  },
+  {
+    "date": "2026-05-26",
+    "total": 15,
+    "correct": 11,
+    "accuracy": 73.3,
+    "brier": 0.2429
+  },
+  {
+    "date": "2026-05-25",
+    "total": 13,
+    "correct": 5,
+    "accuracy": 38.5,
+    "brier": 0.2541
+  },
+  {
+    "date": "2026-05-24",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2496
+  },
+  {
+    "date": "2026-05-23",
+    "total": 14,
+    "correct": 7,
+    "accuracy": 50,
+    "brier": 0.2571
+  },
+  {
+    "date": "2026-05-22",
+    "total": 14,
+    "correct": 8,
+    "accuracy": 57.1,
+    "brier": 0.2554
+  },
+  {
+    "date": "2026-05-21",
+    "total": 7,
+    "correct": 4,
+    "accuracy": 57.1,
+    "brier": 0.2495
+  },
+  {
+    "date": "2026-05-20",
+    "total": 14,
+    "correct": 7,
+    "accuracy": 50,
+    "brier": 0.2361
+  },
+  {
+    "date": "2026-05-19",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2472
+  },
+  {
+    "date": "2026-05-18",
+    "total": 14,
+    "correct": 7,
+    "accuracy": 50,
+    "brier": 0.2433
+  },
+  {
+    "date": "2026-05-17",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2463
+  },
+  {
+    "date": "2026-05-16",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2411
+  },
+  {
+    "date": "2026-05-15",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.2529
+  },
+  {
+    "date": "2026-05-14",
+    "total": 11,
+    "correct": 8,
+    "accuracy": 72.7,
+    "brier": 0.2372
+  },
+  {
+    "date": "2026-05-13",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2566
+  },
+  {
+    "date": "2026-05-12",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2518
+  },
+  {
+    "date": "2026-05-11",
+    "total": 6,
+    "correct": 2,
+    "accuracy": 33.3,
+    "brier": 0.2556
+  },
+  {
+    "date": "2026-05-10",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.258
+  },
+  {
+    "date": "2026-05-09",
+    "total": 14,
+    "correct": 7,
+    "accuracy": 50,
+    "brier": 0.2526
+  },
+  {
+    "date": "2026-05-08",
+    "total": 15,
+    "correct": 5,
+    "accuracy": 33.3,
+    "brier": 0.2578
+  },
+  {
+    "date": "2026-05-07",
+    "total": 10,
+    "correct": 6,
+    "accuracy": 60,
+    "brier": 0.2493
+  },
+  {
+    "date": "2026-05-06",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.25
+  },
+  {
+    "date": "2026-05-05",
+    "total": 13,
+    "correct": 9,
+    "accuracy": 69.2,
+    "brier": 0.236
+  },
+  {
+    "date": "2026-05-04",
+    "total": 12,
+    "correct": 3,
+    "accuracy": 25,
+    "brier": 0.2645
+  },
+  {
+    "date": "2026-05-03",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2467
+  },
+  {
+    "date": "2026-05-02",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2531
+  },
+  {
+    "date": "2026-05-01",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2479
+  },
+  {
+    "date": "2026-04-30",
+    "total": 11,
+    "correct": 4,
+    "accuracy": 36.4,
+    "brier": 0.2538
+  },
+  {
+    "date": "2026-04-29",
+    "total": 13,
+    "correct": 9,
+    "accuracy": 69.2,
+    "brier": 0.2413
+  },
+  {
+    "date": "2026-04-28",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2537
+  },
+  {
+    "date": "2026-04-27",
+    "total": 8,
+    "correct": 4,
+    "accuracy": 50,
+    "brier": 0.2445
+  },
+  {
+    "date": "2026-04-26",
+    "total": 16,
+    "correct": 9,
+    "accuracy": 56.3,
+    "brier": 0.2452
+  },
+  {
+    "date": "2026-04-25",
+    "total": 14,
+    "correct": 4,
+    "accuracy": 28.6,
+    "brier": 0.2596
+  },
+  {
+    "date": "2026-04-24",
+    "total": 14,
+    "correct": 6,
+    "accuracy": 42.9,
+    "brier": 0.2573
+  },
+  {
+    "date": "2026-04-23",
+    "total": 9,
+    "correct": 5,
+    "accuracy": 55.6,
+    "brier": 0.2417
+  },
+  {
+    "date": "2026-04-22",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2426
+  },
+  {
+    "date": "2026-04-21",
+    "total": 15,
+    "correct": 7,
+    "accuracy": 46.7,
+    "brier": 0.2533
+  },
+  {
+    "date": "2026-04-20",
+    "total": 10,
+    "correct": 4,
+    "accuracy": 40,
+    "brier": 0.2504
+  },
+  {
+    "date": "2026-04-19",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2565
+  },
+  {
+    "date": "2026-04-18",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.2461
+  },
+  {
+    "date": "2026-04-17",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2453
+  },
+  {
+    "date": "2026-04-16",
+    "total": 10,
+    "correct": 4,
+    "accuracy": 40,
+    "brier": 0.26
+  },
+  {
+    "date": "2026-04-15",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2402
+  },
+  {
+    "date": "2026-04-14",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2475
+  },
+  {
+    "date": "2026-04-13",
+    "total": 10,
+    "correct": 7,
+    "accuracy": 70,
+    "brier": 0.241
+  },
+  {
+    "date": "2026-04-12",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.2503
+  },
+  {
+    "date": "2026-04-11",
+    "total": 15,
+    "correct": 11,
+    "accuracy": 73.3,
+    "brier": 0.2376
+  },
+  {
+    "date": "2026-04-10",
+    "total": 15,
+    "correct": 6,
+    "accuracy": 40,
+    "brier": 0.2515
+  },
+  {
+    "date": "2026-04-09",
+    "total": 6,
+    "correct": 2,
+    "accuracy": 33.3,
+    "brier": 0.2616
+  },
+  {
+    "date": "2026-04-08",
+    "total": 15,
+    "correct": 12,
+    "accuracy": 80,
+    "brier": 0.2378
+  },
+  {
+    "date": "2026-04-07",
+    "total": 15,
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2492
+  },
+  {
+    "date": "2026-04-06",
+    "total": 13,
+    "correct": 6,
+    "accuracy": 46.2,
+    "brier": 0.2449
+  },
+  {
+    "date": "2026-04-05",
+    "total": 16,
+    "correct": 8,
+    "accuracy": 50,
+    "brier": 0.2489
+  },
+  {
+    "date": "2026-04-04",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.2475
+  },
+  {
+    "date": "2026-04-03",
+    "total": 14,
+    "correct": 6,
+    "accuracy": 42.9,
+    "brier": 0.26
+  },
+  {
+    "date": "2026-04-02",
+    "total": 3,
+    "correct": 1,
+    "accuracy": 33.3,
+    "brier": 0.2465
+  },
+  {
+    "date": "2026-04-01",
+    "total": 15,
+    "correct": 8,
+    "accuracy": 53.3,
+    "brier": 0.249
+  },
+  {
+    "date": "2026-03-31",
+    "total": 14,
+    "correct": 6,
+    "accuracy": 42.9,
+    "brier": 0.2647
+  },
+  {
+    "date": "2026-03-30",
+    "total": 15,
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2424
+  },
+  {
+    "date": "2026-03-29",
+    "total": 12,
+    "correct": 6,
+    "accuracy": 50,
+    "brier": 0.2435
+  },
+  {
+    "date": "2026-03-28",
+    "total": 15,
+    "correct": 4,
+    "accuracy": 26.7,
+    "brier": 0.2551
+  },
+  {
+    "date": "2026-03-27",
+    "total": 8,
+    "correct": 2,
+    "accuracy": 25,
+    "brier": 0.2549
+  },
+  {
+    "date": "2026-03-26",
+    "total": 11,
+    "correct": 2,
+    "accuracy": 18.2,
+    "brier": 0.2677
+  }
+]

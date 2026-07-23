@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "backtest": "node scripts/backtest.mjs"
+    "backtest": "node scripts/backtest.mjs",
+    "generate-history": "node scripts/generate-history.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.2",
