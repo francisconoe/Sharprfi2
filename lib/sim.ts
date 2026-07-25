@@ -19,31 +19,28 @@ export const WOBA_WEIGHTS = {
 } as const
 
 // Hit-type split once a batter reaches via a hit (MLB average, per MLB11.py)
-const PROB_SINGLE = 0.65
+// 🔥 Ajustado: reducir HR y aumentar singles para bajar carreras
+const PROB_SINGLE = 0.67   // antes 0.65
 const PROB_DOUBLE = 0.20
 const PROB_TRIPLE = 0.03
-// HR = remaining 0.12
+// HR = remaining 0.10 (antes 0.12)
 
-const PLATOON_SAME = -0.015
-const PLATOON_DIFFERENT = 0.020
+// 🔥 Reducir efecto platoon
+const PLATOON_SAME = -0.010   // antes -0.015
+const PLATOON_DIFFERENT = 0.015 // antes 0.020
 
 const MIN_REACH = 0.05
 const MAX_REACH = 0.95
 
-// Global reach-probability calibration. Station-to-station advancement (a
-// single never scores a runner from 2nd, no steals/errors/wild pitches)
-// structurally undercounts first-inning scoring, so wOBA-as-reach-probability
-// alone yields ~40% league YRFI vs the observed 49.05% (2023–2025 backtest).
-// This constant is binary-searched so league-average inputs reproduce 49.05%
-// — the same neutral-baseline recalibration the Poisson model went through.
-export const SIM_REACH_CALIBRATION = 1.2333
+// Global reach-probability calibration.
+// 🔥 Reducido de 1.2333 a 1.18 para bajar ligeramente la predicción
+export const SIM_REACH_CALIBRATION = 1.18
 
 export const DEFAULT_SIM_ITERATIONS = 10_000
 
 export type Hand = 'L' | 'R' | 'S'
 
 export interface SimBatter {
-  // Season counting stats; wOBA is computed and shrunk internally
   singles: number
   doubles: number
   triples: number
@@ -55,7 +52,7 @@ export interface SimBatter {
 }
 
 export interface SimPitcher {
-  obpAllowed: number | null // OBP against; null → league average
+  obpAllowed: number | null
   battersFaced: number
   pitchHand: Hand | null
 }
@@ -72,7 +69,6 @@ export interface GameSim {
   away: HalfInningSim
 }
 
-// Deterministic PRNG so cached responses and tests are stable (seed = gamePk)
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0
   return () => {
@@ -84,8 +80,6 @@ export function mulberry32(seed: number): () => number {
   }
 }
 
-// Francisco's volume weights: full trust at 30 PA (batters) / 10 TBF (pitchers),
-// floor 0.15 when volume is missing or zero.
 export function batterTrustWeight(pa: number): number {
   if (!Number.isFinite(pa) || pa <= 0) return 0.15
   return Math.min(pa / 30, 1.0)
@@ -120,7 +114,6 @@ export function applyPlatoon(woba: number, batSide: Hand | null, pitchHand: Hand
 }
 
 export function leagueAverageBatter(): SimBatter {
-  // Produces exactly league-average wOBA after shrinkage (zero PA → full shrink)
   return {
     singles: 0, doubles: 0, triples: 0, homeRuns: 0,
     walks: 0, hitByPitch: 0, plateAppearances: 0, batSide: null,
@@ -144,10 +137,8 @@ function prepareBatters(
     SIM_LEAGUE_AVG_OBP,
   )
   const pitcherMultiplier = pitcherObp / SIM_LEAGUE_AVG_OBP
-  // Runs park factors (FanGraphs, 1.00-neutral) are wider than Francisco's
-  // wOBA-scale table; √PF matches his values (√1.28 ≈ his Coors 1.13) and the
-  // Poisson model's 0.50 park exponent.
-  const parkMultiplier = Math.sqrt(parkFactor)
+  // 🔥 Reducir el exponente del park factor de 0.50 a 0.40 para suavizar impacto
+  const parkMultiplier = Math.pow(parkFactor, 0.40)
 
   const roster = batters.length > 0 ? batters : [leagueAverageBatter()]
   return roster.map(b => {
@@ -161,8 +152,8 @@ function prepareBatters(
     const walks = b.walks + b.hitByPitch
     const hits = b.singles + b.doubles + b.triples + b.homeRuns
     const onBaseEvents = walks + hits
-    // League-average walk share (~30% of on-base events) when no data
-    const pWalkGivenReach = onBaseEvents > 0 ? walks / onBaseEvents : 0.30
+    // 🔥 Reducir walk share por defecto de 0.30 a 0.28
+    const pWalkGivenReach = onBaseEvents > 0 ? walks / onBaseEvents : 0.28
     return { pReach, pWalkGivenReach }
   })
 }
@@ -199,7 +190,6 @@ export function simulateHalfInning(
       }
 
       if (rng() < batter.pWalkGivenReach) {
-        // Walk/HBP: runners advance only when forced
         if (first && second && third) runs++
         else if (first && second) third = true
         else if (first) second = true
@@ -225,7 +215,6 @@ export function simulateHalfInning(
         if (first) { runs++; first = false }
         third = true
       } else {
-        // Home run
         if (third) { runs++; third = false }
         if (second) { runs++; second = false }
         if (first) { runs++; first = false }
@@ -248,7 +237,6 @@ export function simulateHalfInning(
 export interface SimGameInputs {
   gamePk: number
   parkFactor: number
-  // Away bats top 1st vs home pitcher; home bats bottom 1st vs away pitcher
   awayBatters: SimBatter[]
   homeBatters: SimBatter[]
   awayPitcher: SimPitcher
@@ -286,8 +274,6 @@ export function simulateGame(inputs: SimGameInputs): GameSim {
   }
 }
 
-// Francisco's streak factors (team win streak length → multiplier). Applied
-// only when the backtest shows they help; sim callers pass 1.0 otherwise.
 export const STREAK_FACTORS: Record<number, number> = {
   0: 1.00, 1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20, 5: 1.25,
 }
@@ -297,8 +283,6 @@ export function streakFactorForWinStreak(winStreak: number): number {
   return STREAK_FACTORS[capped] ?? 1.0
 }
 
-// Betting EV layer (calcular_ev in MLB11.py): profit per unit from American
-// odds, EV per 1-unit stake given the model's probability.
 export function impliedProbability(americanOdds: number): number {
   if (americanOdds < 0) return Math.abs(americanOdds) / (Math.abs(americanOdds) + 100)
   return 100 / (americanOdds + 100)
