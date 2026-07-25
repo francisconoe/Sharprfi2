@@ -18,7 +18,7 @@ export const LEAGUE_AVG_NRFI_RATE = 0.5095
 
 // 🔥 RECALIBRADO para la tasa base de 2026 (51.8% YRFI → 48.2% NRFI)
 // λ = -ln(0.482) / 2 ≈ 0.366
-export const BASE_LAMBDA = 0.366
+export const BASE_LAMBDA = 0.350
 
 export const FIP_CONSTANT = 3.10
 export const LEAGUE_AVG_HARD_HIT_PCT = 38.0
@@ -39,10 +39,10 @@ export const PITCHER_BB9_STABILIZATION_IP = 40   // 🔥 NUEVO: para BB/9
 // PESOS DE FACTORES (actualizados con nuevas variables)
 // ================================================================
 
-const FIP_FACTOR_WEIGHT = 0.55
+const FIP_FACTOR_WEIGHT = 0.45
 const BARREL_FACTOR_WEIGHT = 0.35
-const OBP_FACTOR_WEIGHT = 0.70
-const TOP_OF_ORDER_FACTOR_WEIGHT = 0.45
+const OBP_FACTOR_WEIGHT = 0.55
+const TOP_OF_ORDER_FACTOR_WEIGHT = 0.35
 const PARK_FACTOR_WEIGHT = 0.50
 const WEATHER_FACTOR_WEIGHT = 0.50
 const PLATOON_FACTOR_WEIGHT = 0.25
