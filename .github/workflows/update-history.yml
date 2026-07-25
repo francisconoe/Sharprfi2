@@ -11,13 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 🔥 Actualizado de v4 a v6 (soporte nativo para Node.js 24)
       - name: Clonar repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
+      # 🔥 Actualizado de v4 a v6 y node-version a 24
       - name: Configurar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Instalar dependencias
         run: npm install
