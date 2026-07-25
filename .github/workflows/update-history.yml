@@ -2,20 +2,19 @@ name: Actualizar Historial Diario
 
 on:
   schedule:
-    # Ejecutar todos los días a las 23:30 UTC (5:30 PM CDMX)
     - cron: '30 23 * * *'
-  workflow_dispatch: # Permite ejecutar manualmente
+  workflow_dispatch:
 
 jobs:
   update-history:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 🔥 Permiso para hacer push al repositorio
 
     steps:
-      # 🔥 Actualizado de v4 a v6 (soporte nativo para Node.js 24)
       - name: Clonar repositorio
         uses: actions/checkout@v6
 
-      # 🔥 Actualizado de v4 a v6 y node-version a 24
       - name: Configurar Node.js
         uses: actions/setup-node@v6
         with:
