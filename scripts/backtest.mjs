@@ -57,6 +57,7 @@ const MIN_ADJUSTMENT_FACTOR = 0.55
 const MAX_ADJUSTMENT_FACTOR = 1.55
 const BACKTEST_CACHE_VERSION = 'v4'
 const MAX_FETCH_RETRIES = 5
+const FETCH_TIMEOUT_MS = 30000 // 🔥 30 segundos de timeout
 
 const PARK_FACTORS = {
   1: 0.97, 2: 0.97, 3: 1.02, 4: 0.96, 5: 0.97, 7: 1.0, 10: 0.97, 12: 0.96,
@@ -242,50 +243,97 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+// ============================================================
+// 🔥 fetchJson con timeout y reintentos mejorados
+// ============================================================
 async function fetchJson(url) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+
   for (let attempt = 0; attempt <= MAX_FETCH_RETRIES; attempt += 1) {
-    const res = await fetch(url)
-    if (res.ok) {
-      return res.json()
-    }
+    try {
+      const res = await fetch(url, { signal: controller.signal })
+      clearTimeout(timeoutId)
 
-    if (res.status === 429 && attempt < MAX_FETCH_RETRIES) {
-      const retryAfterHeader = res.headers.get('retry-after')
-      const retryAfterSeconds = retryAfterHeader ? Number.parseFloat(retryAfterHeader) : Number.NaN
-      const backoffMs = Number.isFinite(retryAfterSeconds)
-        ? retryAfterSeconds * 1000
-        : 1000 * 2 ** attempt
-      await sleep(backoffMs)
-      continue
-    }
+      if (res.ok) {
+        return res.json()
+      }
 
-    throw new Error(`Request failed (${res.status}): ${url}`)
+      if (res.status === 429 && attempt < MAX_FETCH_RETRIES) {
+        const retryAfterHeader = res.headers.get('retry-after')
+        const retryAfterSeconds = retryAfterHeader ? Number.parseFloat(retryAfterHeader) : Number.NaN
+        const backoffMs = Number.isFinite(retryAfterSeconds)
+          ? retryAfterSeconds * 1000
+          : 1000 * 2 ** attempt
+        await sleep(backoffMs)
+        continue
+      }
+
+      throw new Error(`Request failed (${res.status}): ${url}`)
+    } catch (error) {
+      clearTimeout(timeoutId)
+
+      // Si es un error de timeout, lanzamos un mensaje claro
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timeout after ${FETCH_TIMEOUT_MS}ms: ${url}`)
+      }
+
+      if (attempt < MAX_FETCH_RETRIES) {
+        const backoffMs = 1000 * (attempt + 1)
+        await sleep(backoffMs)
+        continue
+      }
+      throw error
+    }
   }
 
-  throw new Error(`Request failed after retries: ${url}`)
+  throw new Error(`Request failed after ${MAX_FETCH_RETRIES} retries: ${url}`)
 }
 
+// ============================================================
+// 🔥 fetchText con timeout y reintentos mejorados
+// ============================================================
 async function fetchText(url) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+
   for (let attempt = 0; attempt <= MAX_FETCH_RETRIES; attempt += 1) {
-    const res = await fetch(url)
-    if (res.ok) {
-      return res.text()
-    }
+    try {
+      const res = await fetch(url, { signal: controller.signal })
+      clearTimeout(timeoutId)
 
-    if (res.status === 429 && attempt < MAX_FETCH_RETRIES) {
-      const retryAfterHeader = res.headers.get('retry-after')
-      const retryAfterSeconds = retryAfterHeader ? Number.parseFloat(retryAfterHeader) : Number.NaN
-      const backoffMs = Number.isFinite(retryAfterSeconds)
-        ? retryAfterSeconds * 1000
-        : 1000 * 2 ** attempt
-      await sleep(backoffMs)
-      continue
-    }
+      if (res.ok) {
+        return res.text()
+      }
 
-    throw new Error(`Request failed (${res.status}): ${url}`)
+      if (res.status === 429 && attempt < MAX_FETCH_RETRIES) {
+        const retryAfterHeader = res.headers.get('retry-after')
+        const retryAfterSeconds = retryAfterHeader ? Number.parseFloat(retryAfterHeader) : Number.NaN
+        const backoffMs = Number.isFinite(retryAfterSeconds)
+          ? retryAfterSeconds * 1000
+          : 1000 * 2 ** attempt
+        await sleep(backoffMs)
+        continue
+      }
+
+      throw new Error(`Request failed (${res.status}): ${url}`)
+    } catch (error) {
+      clearTimeout(timeoutId)
+
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timeout after ${FETCH_TIMEOUT_MS}ms: ${url}`)
+      }
+
+      if (attempt < MAX_FETCH_RETRIES) {
+        const backoffMs = 1000 * (attempt + 1)
+        await sleep(backoffMs)
+        continue
+      }
+      throw error
+    }
   }
 
-  throw new Error(`Request failed after retries: ${url}`)
+  throw new Error(`Request failed after ${MAX_FETCH_RETRIES} retries: ${url}`)
 }
 
 // ============================================================
