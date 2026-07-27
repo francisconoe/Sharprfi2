@@ -36,25 +36,19 @@ const RESPONSE_TTL_SECONDS = 300 // 5 minutes
 const RESPONSE_CACHE_VERSION = 'v4'
 
 // ================================================================
-// 🔥 Platt Scaling para recalibrar probabilidades
+// 🔥 Platt Scaling - DESACTIVADO para diagnóstico
 // ================================================================
-/**
- * Aplica Platt Scaling para corregir la calibración.
- * Coeficientes estimados a partir del backtest 2026 (blend).
- * a = 0.85 (reduce confianza en extremos)
- * b = 0.05 (corrige sesgo positivo)
- */
+/*
 function plattScale(p: number): number {
   const a = 0.85
   const b = 0.05
-  // Evitar log(0) o log(1)
   const clipped = Math.min(Math.max(p, 0.001), 0.999)
   const logit = Math.log(clipped / (1 - clipped))
   const calibratedLogit = a * logit + b
   const calibrated = 1 / (1 + Math.exp(-calibratedLogit))
-  // Clampear para evitar valores fuera de [0,1]
   return Math.min(Math.max(calibrated, 0.01), 0.99)
 }
+*/
 
 function getPacificDate(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date())
@@ -399,15 +393,12 @@ export async function GET(req: NextRequest) {
         })
 
         // ================================================================
-        // 6. BLEND Y RECALIBRACIÓN CON PLATT SCALING
+        // 6. BLEND 70/30 (70% Poisson, 30% Simulación)
         // ================================================================
-        let rawYrfiProbability =
+        const yrfiProbability =
           HEADLINE_MODEL === 'sim' ? sim.simYrfiProbability :
-          HEADLINE_MODEL === 'blend' ? (poissonYrfiProbability + sim.simYrfiProbability) / 2 :
+          HEADLINE_MODEL === 'blend' ? 0.7 * poissonYrfiProbability + 0.3 * sim.simYrfiProbability :
           poissonYrfiProbability
-
-        // 🔥 Aplicar Platt Scaling para mejorar la calibración
-        const yrfiProbability = plattScale(rawYrfiProbability)
 
         const odds = breakEvenOdds(yrfiProbability)
 
@@ -434,7 +425,7 @@ export async function GET(req: NextRequest) {
           topOfOrderOBP: { home: homeTopOfOrderOBP, away: awayTopOfOrderOBP },
           parkFactor,
           lambda: { home: lambdaHome, away: lambdaAway },
-          yrfiProbability, // Recalibrada
+          yrfiProbability,
           poissonYrfiProbability,
           simYrfiProbability: sim.simYrfiProbability,
           modelUsed: HEADLINE_MODEL,

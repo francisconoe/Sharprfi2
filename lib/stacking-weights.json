@@ -1,0 +1,9 @@
+{
+  "type": "logistic",
+  "weights": {
+    "diff_coeff": 0.5,
+    "intercept": 0.07145514537469033
+  },
+  "trainedOn": "2026-07-24T21:31:24.812Z",
+  "n": 1344
+}

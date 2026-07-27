@@ -2,14 +2,14 @@ name: Actualizar Historial Diario
 
 on:
   schedule:
-    - cron: '30 23 * * *'
+    - cron: '0 2 * * *'   # 🔥 8:00 PM CDMX
   workflow_dispatch:
 
 jobs:
   update-history:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # 🔥 Permiso para hacer push al repositorio
+      contents: write
 
     steps:
       - name: Clonar repositorio
