@@ -77,19 +77,44 @@ function ConfidenceBar({ game }: { game: GameResult }) {
   )
 }
 
+// 🔥 ResultBadge ahora muestra CORRECT/FAIL según el modo activo
 function ResultBadge({ game, mode }: { game: GameResult; mode: ViewMode }) {
-  const winBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-300 border border-emerald-500/30'
-  const lossBadge = 'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-300 border border-rose-500/30'
-  if (game.firstInningResult === 'run') {
-    return <span className={mode === 'yrfi' ? winBadge : lossBadge}>RUN</span>
+  // Si el juego está pendiente o en progreso sin resultado, mostrar estado
+  if (game.firstInningResult === 'pending') {
+    if (game.gameStatus === 'inProgress') {
+      return (
+        <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">
+          IP
+        </span>
+      )
+    }
+    return <span className="inline-flex w-full justify-center text-slate-500">—</span>
   }
-  if (game.firstInningResult === 'no_run') {
-    return <span className={mode === 'yrfi' ? lossBadge : winBadge}>NO RUN</span>
+
+  // Determinar si la predicción fue correcta según el modo activo
+  // La probabilidad mostrada depende del modo (YRFI o NRFI)
+  const predicted = viewProbability(game, mode) >= 0.5
+  // El resultado real depende del modo
+  const actual = mode === 'yrfi'
+    ? game.firstInningResult === 'run'
+    : game.firstInningResult === 'no_run'
+  const isCorrect = predicted === actual
+
+  const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold border'
+
+  if (isCorrect) {
+    return (
+      <span className={`${baseClasses} bg-emerald-500/20 text-emerald-300 border-emerald-500/30`}>
+        ✅ CORRECT
+      </span>
+    )
+  } else {
+    return (
+      <span className={`${baseClasses} bg-rose-500/20 text-rose-300 border-rose-500/30`}>
+        ❌ FAIL
+      </span>
+    )
   }
-  if (game.gameStatus === 'inProgress') {
-    return <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">IP</span>
-  }
-  return <span className="inline-flex w-full justify-center text-slate-500">—</span>
 }
 
 function PitcherName({ pitcher }: { pitcher: GameResult['homePitcher'] }) {
@@ -151,9 +176,9 @@ export default function GameRow({ game }: GameRowProps) {
         <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-400">{wind}</td>
         {/* Time */}
         <td className="px-3 py-3 align-middle whitespace-nowrap text-center text-sm text-slate-400">{time}</td>
-        {/* Result + Confidence */}
+        {/* Result (CORRECT/FAIL) + Confidence */}
         <td className="px-2.5 py-3 align-middle whitespace-nowrap">
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex flex-col items-end gap-1">
             <ResultBadge game={game} mode={settings.mode} />
             <ConfidenceBar game={game} />
           </div>
