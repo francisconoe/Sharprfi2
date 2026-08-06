@@ -138,7 +138,7 @@ function prepareBatters(
   )
   const pitcherMultiplier = pitcherObp / SIM_LEAGUE_AVG_OBP
   // 🔥 Reducir el exponente del park factor de 0.50 a 0.40 para suavizar impacto
-  const parkMultiplier = Math.pow(parkFactor, 0.40)
+  const parkMultiplier = Math.pow(parkFactor, 0.45)
 
   const roster = batters.length > 0 ? batters : [leagueAverageBatter()]
   return roster.map(b => {

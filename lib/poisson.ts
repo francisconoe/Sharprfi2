@@ -39,9 +39,9 @@ export const PITCHER_BB9_STABILIZATION_IP = 40   // 🔥 NUEVO: para BB/9
 // PESOS DE FACTORES (actualizados con nuevas variables)
 // ================================================================
 
-const FIP_FACTOR_WEIGHT = 0.45
+const FIP_FACTOR_WEIGHT = 0.55
 const BARREL_FACTOR_WEIGHT = 0.35
-const OBP_FACTOR_WEIGHT = 0.55
+const OBP_FACTOR_WEIGHT = 0.70
 const TOP_OF_ORDER_FACTOR_WEIGHT = 0.35
 const PARK_FACTOR_WEIGHT = 0.50
 const WEATHER_FACTOR_WEIGHT = 0.50

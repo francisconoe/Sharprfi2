@@ -393,11 +393,11 @@ export async function GET(req: NextRequest) {
         })
 
         // ================================================================
-        // 6. BLEND 70/30 (70% Poisson, 30% Simulación)
+        // 6. BLEND 50/50 (50% Poisson, 50% Simulación)
         // ================================================================
         const yrfiProbability =
           HEADLINE_MODEL === 'sim' ? sim.simYrfiProbability :
-          HEADLINE_MODEL === 'blend' ? 0.7 * poissonYrfiProbability + 0.3 * sim.simYrfiProbability :
+          HEADLINE_MODEL === 'blend' ? 0.5 * poissonYrfiProbability + 0.5 * sim.simYrfiProbability :
           poissonYrfiProbability
 
         const odds = breakEvenOdds(yrfiProbability)
