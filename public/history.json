@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-08-10",
+    "total": 10,
+    "correct": 5,
+    "accuracy": 50,
+    "brier": 0.2525
+  },
+  {
     "date": "2026-08-09",
     "total": 15,
     "correct": 9,
@@ -16,9 +23,9 @@
   {
     "date": "2026-08-07",
     "total": 15,
-    "correct": 10,
-    "accuracy": 66.7,
-    "brier": 0.2503
+    "correct": 9,
+    "accuracy": 60,
+    "brier": 0.2501
   },
   {
     "date": "2026-08-06",
@@ -39,56 +46,56 @@
     "total": 15,
     "correct": 5,
     "accuracy": 33.3,
-    "brier": 0.255
+    "brier": 0.2556
   },
   {
     "date": "2026-08-03",
     "total": 8,
     "correct": 4,
     "accuracy": 50,
-    "brier": 0.2541
+    "brier": 0.254
   },
   {
     "date": "2026-08-02",
     "total": 15,
     "correct": 9,
     "accuracy": 60,
-    "brier": 0.2498
+    "brier": 0.2497
   },
   {
     "date": "2026-08-01",
     "total": 15,
     "correct": 10,
     "accuracy": 66.7,
-    "brier": 0.2478
+    "brier": 0.2479
   },
   {
     "date": "2026-07-31",
     "total": 15,
     "correct": 9,
     "accuracy": 60,
-    "brier": 0.2345
+    "brier": 0.2344
   },
   {
     "date": "2026-07-30",
     "total": 10,
     "correct": 4,
     "accuracy": 40,
-    "brier": 0.2671
+    "brier": 0.2674
   },
   {
     "date": "2026-07-29",
     "total": 16,
     "correct": 7,
     "accuracy": 43.8,
-    "brier": 0.252
+    "brier": 0.2522
   },
   {
     "date": "2026-07-28",
     "total": 15,
-    "correct": 10,
-    "accuracy": 66.7,
-    "brier": 0.2399
+    "correct": 11,
+    "accuracy": 73.3,
+    "brier": 0.2401
   },
   {
     "date": "2026-07-27",
@@ -102,35 +109,35 @@
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2396
+    "brier": 0.2395
   },
   {
     "date": "2026-07-25",
     "total": 15,
     "correct": 4,
     "accuracy": 26.7,
-    "brier": 0.2673
+    "brier": 0.2676
   },
   {
     "date": "2026-07-24",
     "total": 15,
     "correct": 6,
     "accuracy": 40,
-    "brier": 0.2564
+    "brier": 0.2566
   },
   {
     "date": "2026-07-23",
     "total": 5,
     "correct": 4,
     "accuracy": 80,
-    "brier": 0.2323
+    "brier": 0.2324
   },
   {
     "date": "2026-07-22",
     "total": 17,
     "correct": 8,
     "accuracy": 47.1,
-    "brier": 0.2477
+    "brier": 0.2483
   },
   {
     "date": "2026-07-21",
@@ -144,7 +151,7 @@
     "total": 15,
     "correct": 6,
     "accuracy": 40,
-    "brier": 0.255
+    "brier": 0.2552
   },
   {
     "date": "2026-07-19",
@@ -158,7 +165,7 @@
     "total": 15,
     "correct": 9,
     "accuracy": 60,
-    "brier": 0.2403
+    "brier": 0.2404
   },
   {
     "date": "2026-07-17",
@@ -172,7 +179,7 @@
     "total": 1,
     "correct": 0,
     "accuracy": 0,
-    "brier": 0.2758
+    "brier": 0.2747
   },
   {
     "date": "2026-07-12",
@@ -186,42 +193,42 @@
     "total": 16,
     "correct": 6,
     "accuracy": 37.5,
-    "brier": 0.2565
+    "brier": 0.2566
   },
   {
     "date": "2026-07-10",
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2494
+    "brier": 0.2493
   },
   {
     "date": "2026-07-09",
     "total": 13,
     "correct": 4,
     "accuracy": 30.8,
-    "brier": 0.2551
+    "brier": 0.2553
   },
   {
     "date": "2026-07-08",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2594
+    "brier": 0.2587
   },
   {
     "date": "2026-07-07",
     "total": 16,
     "correct": 7,
     "accuracy": 43.8,
-    "brier": 0.2454
+    "brier": 0.2452
   },
   {
     "date": "2026-07-06",
     "total": 8,
     "correct": 3,
     "accuracy": 37.5,
-    "brier": 0.2521
+    "brier": 0.252
   },
   {
     "date": "2026-07-05",
@@ -242,28 +249,28 @@
     "total": 13,
     "correct": 7,
     "accuracy": 53.8,
-    "brier": 0.242
+    "brier": 0.2418
   },
   {
     "date": "2026-07-02",
     "total": 9,
     "correct": 5,
     "accuracy": 55.6,
-    "brier": 0.243
+    "brier": 0.2428
   },
   {
     "date": "2026-07-01",
     "total": 13,
     "correct": 10,
     "accuracy": 76.9,
-    "brier": 0.2304
+    "brier": 0.2306
   },
   {
     "date": "2026-06-30",
     "total": 15,
     "correct": 12,
     "accuracy": 80,
-    "brier": 0.2275
+    "brier": 0.2273
   },
   {
     "date": "2026-06-29",
@@ -277,7 +284,7 @@
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2468
+    "brier": 0.2469
   },
   {
     "date": "2026-06-27",
@@ -291,14 +298,14 @@
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2475
+    "brier": 0.2476
   },
   {
     "date": "2026-06-25",
     "total": 8,
     "correct": 2,
     "accuracy": 25,
-    "brier": 0.2589
+    "brier": 0.259
   },
   {
     "date": "2026-06-24",
@@ -312,7 +319,7 @@
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2514
+    "brier": 0.2513
   },
   {
     "date": "2026-06-22",
@@ -326,7 +333,7 @@
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2578
+    "brier": 0.2577
   },
   {
     "date": "2026-06-20",
@@ -340,21 +347,21 @@
     "total": 14,
     "correct": 6,
     "accuracy": 42.9,
-    "brier": 0.2509
+    "brier": 0.2508
   },
   {
     "date": "2026-06-18",
     "total": 8,
     "correct": 6,
     "accuracy": 75,
-    "brier": 0.2355
+    "brier": 0.2352
   },
   {
     "date": "2026-06-17",
     "total": 14,
     "correct": 8,
     "accuracy": 57.1,
-    "brier": 0.2389
+    "brier": 0.2391
   },
   {
     "date": "2026-06-16",
@@ -368,7 +375,7 @@
     "total": 10,
     "correct": 7,
     "accuracy": 70,
-    "brier": 0.2339
+    "brier": 0.234
   },
   {
     "date": "2026-06-14",
@@ -389,28 +396,28 @@
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2514
+    "brier": 0.2513
   },
   {
     "date": "2026-06-11",
     "total": 7,
     "correct": 4,
     "accuracy": 57.1,
-    "brier": 0.2526
+    "brier": 0.253
   },
   {
     "date": "2026-06-10",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.258
+    "brier": 0.2579
   },
   {
     "date": "2026-06-09",
     "total": 15,
-    "correct": 9,
-    "accuracy": 60,
-    "brier": 0.2432
+    "correct": 10,
+    "accuracy": 66.7,
+    "brier": 0.2431
   },
   {
     "date": "2026-06-08",
@@ -424,7 +431,7 @@
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2463
+    "brier": 0.2462
   },
   {
     "date": "2026-06-06",
@@ -438,14 +445,14 @@
     "total": 15,
     "correct": 11,
     "accuracy": 73.3,
-    "brier": 0.2323
+    "brier": 0.2322
   },
   {
     "date": "2026-06-04",
     "total": 9,
     "correct": 5,
     "accuracy": 55.6,
-    "brier": 0.2521
+    "brier": 0.252
   },
   {
     "date": "2026-06-03",
@@ -473,35 +480,35 @@
     "total": 15,
     "correct": 10,
     "accuracy": 66.7,
-    "brier": 0.2415
+    "brier": 0.2414
   },
   {
     "date": "2026-05-30",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2437
+    "brier": 0.2436
   },
   {
     "date": "2026-05-29",
     "total": 15,
     "correct": 10,
     "accuracy": 66.7,
-    "brier": 0.2443
+    "brier": 0.2445
   },
   {
     "date": "2026-05-28",
     "total": 6,
     "correct": 3,
     "accuracy": 50,
-    "brier": 0.2461
+    "brier": 0.2462
   },
   {
     "date": "2026-05-27",
     "total": 15,
     "correct": 10,
     "accuracy": 66.7,
-    "brier": 0.2386
+    "brier": 0.2388
   },
   {
     "date": "2026-05-26",
@@ -522,28 +529,28 @@
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2509
+    "brier": 0.2504
   },
   {
     "date": "2026-05-23",
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2591
+    "brier": 0.2592
   },
   {
     "date": "2026-05-22",
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2525
+    "brier": 0.2527
   },
   {
     "date": "2026-05-21",
     "total": 7,
     "correct": 4,
     "accuracy": 57.1,
-    "brier": 0.2517
+    "brier": 0.252
   },
   {
     "date": "2026-05-20",
@@ -578,7 +585,7 @@
     "total": 15,
     "correct": 10,
     "accuracy": 66.7,
-    "brier": 0.243
+    "brier": 0.2429
   },
   {
     "date": "2026-05-15",
@@ -592,35 +599,35 @@
     "total": 11,
     "correct": 8,
     "accuracy": 72.7,
-    "brier": 0.2391
+    "brier": 0.2392
   },
   {
     "date": "2026-05-13",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2554
+    "brier": 0.2555
   },
   {
     "date": "2026-05-12",
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2511
+    "brier": 0.251
   },
   {
     "date": "2026-05-11",
     "total": 6,
     "correct": 3,
     "accuracy": 50,
-    "brier": 0.2568
+    "brier": 0.2565
   },
   {
     "date": "2026-05-10",
     "total": 15,
     "correct": 4,
     "accuracy": 26.7,
-    "brier": 0.2593
+    "brier": 0.2594
   },
   {
     "date": "2026-05-09",
@@ -641,21 +648,21 @@
     "total": 10,
     "correct": 6,
     "accuracy": 60,
-    "brier": 0.2512
+    "brier": 0.2513
   },
   {
     "date": "2026-05-06",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.248
+    "brier": 0.2481
   },
   {
     "date": "2026-05-05",
     "total": 13,
     "correct": 7,
     "accuracy": 53.8,
-    "brier": 0.2374
+    "brier": 0.2376
   },
   {
     "date": "2026-05-04",
@@ -669,70 +676,70 @@
     "total": 15,
     "correct": 6,
     "accuracy": 40,
-    "brier": 0.2511
+    "brier": 0.2512
   },
   {
     "date": "2026-05-02",
     "total": 15,
     "correct": 9,
     "accuracy": 60,
-    "brier": 0.2509
+    "brier": 0.2508
   },
   {
     "date": "2026-05-01",
     "total": 15,
     "correct": 6,
     "accuracy": 40,
-    "brier": 0.2496
+    "brier": 0.2497
   },
   {
     "date": "2026-04-30",
     "total": 11,
     "correct": 3,
     "accuracy": 27.3,
-    "brier": 0.2552
+    "brier": 0.2555
   },
   {
     "date": "2026-04-29",
     "total": 13,
     "correct": 9,
     "accuracy": 69.2,
-    "brier": 0.2406
+    "brier": 0.2405
   },
   {
     "date": "2026-04-28",
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2536
+    "brier": 0.2537
   },
   {
     "date": "2026-04-27",
     "total": 8,
     "correct": 4,
     "accuracy": 50,
-    "brier": 0.2426
+    "brier": 0.2427
   },
   {
     "date": "2026-04-26",
     "total": 16,
     "correct": 8,
     "accuracy": 50,
-    "brier": 0.2465
+    "brier": 0.2464
   },
   {
     "date": "2026-04-25",
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2577
+    "brier": 0.2576
   },
   {
     "date": "2026-04-24",
     "total": 14,
     "correct": 7,
     "accuracy": 50,
-    "brier": 0.2562
+    "brier": 0.2561
   },
   {
     "date": "2026-04-23",
@@ -760,28 +767,28 @@
     "total": 10,
     "correct": 4,
     "accuracy": 40,
-    "brier": 0.2518
+    "brier": 0.2517
   },
   {
     "date": "2026-04-19",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2567
+    "brier": 0.2569
   },
   {
     "date": "2026-04-18",
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2442
+    "brier": 0.2439
   },
   {
     "date": "2026-04-17",
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2473
+    "brier": 0.2474
   },
   {
     "date": "2026-04-16",
@@ -795,21 +802,21 @@
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2437
+    "brier": 0.2439
   },
   {
     "date": "2026-04-14",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2465
+    "brier": 0.2466
   },
   {
     "date": "2026-04-13",
     "total": 10,
     "correct": 8,
     "accuracy": 80,
-    "brier": 0.2399
+    "brier": 0.2403
   },
   {
     "date": "2026-04-12",
@@ -830,7 +837,7 @@
     "total": 15,
     "correct": 7,
     "accuracy": 46.7,
-    "brier": 0.2532
+    "brier": 0.2534
   },
   {
     "date": "2026-04-09",
@@ -851,34 +858,34 @@
     "total": 15,
     "correct": 11,
     "accuracy": 73.3,
-    "brier": 0.2467
+    "brier": 0.2469
   },
   {
     "date": "2026-04-06",
     "total": 13,
     "correct": 6,
     "accuracy": 46.2,
-    "brier": 0.2463
+    "brier": 0.2462
   },
   {
     "date": "2026-04-05",
     "total": 16,
     "correct": 7,
     "accuracy": 43.8,
-    "brier": 0.2483
+    "brier": 0.2482
   },
   {
     "date": "2026-04-04",
     "total": 15,
     "correct": 8,
     "accuracy": 53.3,
-    "brier": 0.2481
+    "brier": 0.2484
   },
   {
     "date": "2026-04-03",
     "total": 14,
-    "correct": 6,
-    "accuracy": 42.9,
+    "correct": 5,
+    "accuracy": 35.7,
     "brier": 0.2584
   },
   {
@@ -893,35 +900,35 @@
     "total": 15,
     "correct": 9,
     "accuracy": 60,
-    "brier": 0.247
+    "brier": 0.2471
   },
   {
     "date": "2026-03-31",
     "total": 14,
     "correct": 6,
     "accuracy": 42.9,
-    "brier": 0.2659
+    "brier": 0.2657
   },
   {
     "date": "2026-03-30",
     "total": 15,
     "correct": 12,
     "accuracy": 80,
-    "brier": 0.2418
+    "brier": 0.2416
   },
   {
     "date": "2026-03-29",
     "total": 12,
     "correct": 5,
     "accuracy": 41.7,
-    "brier": 0.2479
+    "brier": 0.2478
   },
   {
     "date": "2026-03-28",
     "total": 15,
     "correct": 5,
     "accuracy": 33.3,
-    "brier": 0.2565
+    "brier": 0.2564
   },
   {
     "date": "2026-03-27",
@@ -935,6 +942,6 @@
     "total": 11,
     "correct": 2,
     "accuracy": 18.2,
-    "brier": 0.2638
+    "brier": 0.2639
   }
 ]
